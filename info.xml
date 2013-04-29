@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<extension key="ca.bidon.reporterror" type="module">
+  <file>reporterror</file>
+  <name>CiviCRM Report Error</name>
+  <description>Advanced error handler for CiviCRM (sends an e-mail with detailed information on fatal errors)</description>
+  <license>AGPL 3</license>
+  <maintainer>
+    <author>Mathieu Lutfy</author>
+    <email>mathieu@bidon.ca</email>
+  </maintainer>
+  <releaseDate>2013-04-29</releaseDate>
+  <version>1.0</version>
+  <develStage>alpha</develStage>
+  <compatibility>
+    <ver>4.2</ver>
+    <ver>4.3</ver>
+    <ver>4.4</ver>
+  </compatibility>
+  <comments>This is a new, undeveloped module</comments>
+  <civix>
+    <namespace>CRM/ReportError</namespace>
+  </civix>
+</extension>

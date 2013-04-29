@@ -1,0 +1,351 @@
+<?php
+
+/**
+ * @file
+ * Module to capture errors from CiviCRM
+ */
+
+/**
+ * Implements hook_civicrm_config().
+ */
+function civicrm_error_civicrm_config(&$config) {
+  // override the error handler
+  $config =& CRM_Core_Config::singleton( );
+  $config->fatalErrorHandler = 'civicrm_error_handler';
+}
+
+/**
+ * Implements hook_menu().
+ */
+function civicrm_error_menu() {
+  $items = array();
+
+  $items['admin/reports/civicrm_error'] = array(
+    'title'             => 'CiviCRM Error Handler',
+    'description'       => 'Email critical CiviCRM errors.',
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => array('civicrm_error_settings'),
+    'access arguments'  => array('administer site configuration'),
+  );
+
+  return $items;
+}
+
+/**
+ *  Custom error function
+ *  Set CiviCRM » Administer CiviCRM » Global Settings » Debugging » Fatal Error Handler
+ *  to use this function.
+ */
+function civicrm_error_handler($vars) {
+  $sendreport = TRUE;
+  $redirect_path = NULL;
+  $redirect_options = array();
+
+  //
+  // Try to handle the error in a more user-friendly way
+  //
+
+  // Contribution forms: error with no HTTP_REFERER (most likely a bot, restored session, or copy-pasted link)
+  if (arg(0) == 'civicrm' && arg(1) == 'contribute' && arg(2) == 'transact' && ! $_SERVER['HTTP_REFERER']) {
+    $handle = variable_get('civicrm_error_fallback_contrib_noreferer_handle', 0);
+    $pageid = variable_get('civicrm_error_fallback_contrib_noreferer_dest', 0);
+
+    if ($handle == 1 || ($handle == 2 && ! $pageid)) {
+      $redirect_path = '<front>';
+    }
+    elseif ($handle == 2) {
+      $redirect_path = 'civicrm/contribute/transact';
+      $redirect_options['query'] = array(
+        'reset' => 1,
+        'id' => $pageid,
+      );
+    }
+
+    $sendreport = variable_get('civicrm_error_fallback_contrib_noreferer_alert', 1);
+  }
+
+  if (arg(0) == 'civicrm' && arg(1) == 'contribute' && arg(2) == 'campaign' && ! isset($_REQUEST['component'])) {
+    $handle = variable_get('civicrm_error_fallback_pcp_nocomponent_handle', 0);
+    $pageid = $_REQUEST['pageId'];
+
+    if ($handle == 1) {
+      $redirect_path = '<front>';
+    }
+    elseif ($handle == 2) {
+      $redirect_path = 'civicrm/contribute/campaign';
+      $redirect_options['query'] = array(
+        'reset' => 1,
+        'action' => 'add',
+        'pageId' => $pageid,
+        'component' => 'contribute',
+      );
+    }
+
+    $sendreport = variable_get('civicrm_error_fallback_pcp_nocomponent_alert', 1);
+  }
+
+  // Send email report
+  if ($sendreport) {
+    $site = variable_get('site_name', 'drupal');
+    $len = variable_get('civicrm_error_subject_length', 25);
+  
+    $subject = ($redirect_path ? t('CiviCRM error [redirected] at !site', array('!site' => $site)) : t('CiviCRM error at !site', array('!site' => $site)));
+
+    if ($len) {
+      $subject .= ' (' . substr($vars['message'], 0, $len) . ')';
+    }
+  
+    $to = variable_get('civicrm_error_to', variable_get("site_mail", ini_get("sendmail_from")));
+  
+    $destinations = explode(',', $to);
+    $output = civicrm_error_generatereport($vars, $redirect_path, $redirect_options);
+  
+    foreach ($destinations as $dest) {
+      $dest = trim($dest);
+      civicrm_error_send_mail($dest, $subject, $output);
+    }
+  }
+
+  // A redirection avoids displaying the error to the user.
+  if ($redirect_path) {
+    // 307 = temporary redirect. Assuming it reduces the chances that the browser
+    // keeps the redirection in cache.
+    drupal_goto($redirect_path, $redirect_options, 307);
+  }
+}
+
+/**
+ * Returns a plain text output for the e-mail report.
+ */
+function civicrm_error_generatereport($vars, $redirect_path, $redirect_options) {
+  $site = variable_get('site_name', 'drupal');
+
+  $output = t('There was a CiviCRM error at !site.', array('!site' => $site)) . "\n";
+  $output .= t('Date: !date', array('!date' => date('c'))) . "\n\n";
+
+  if ($redirect_path) {
+    $redirect_options['absolute'] = TRUE;
+
+    $output .= t("Error handling rules redirected the user to:") . "\n";
+    $output .= url($redirect_path, $redirect_options) . "\n\n";
+  }
+
+  // Error details
+  if (function_exists('error_get_last')) {
+    $output .= "***ERROR***\n";
+    $output .= print_r(error_get_last(), TRUE);
+  }
+
+  $output .= print_r($vars, TRUE);
+
+  // User info
+  global $user;
+  $output .= "\n\n***USER***\n";
+  $output .= _civicrm_error_parse_array($user);
+
+  // $_SERVER
+  $output .= "\n\n***SERVER***\n";
+  $output .= _civicrm_error_parse_array($_SERVER);
+
+  // Backtrace
+  $backtrace = debug_backtrace();
+  $output .= "\n\n***BACKTRACE***\n";
+  foreach ($backtrace as $call) {
+    $output .= "**next call**\n";
+    $output .= _civicrm_error_parse_array($call);
+  }
+
+  return $output;
+}
+
+/**
+ * Send the e-mail using drupal_mail()
+ */
+function civicrm_error_send_mail($to, $subject, $output) {
+  // c.f. http://api.drupal.org/api/drupal/includes!mail.inc/function/drupal_mail/7
+  $module = 'civicrm_error';
+  $key = 'stderr';
+  $language = language_default();
+  $params = array();
+  $from = variable_get("site_mail", ini_get("sendmail_from"));
+  $send = FALSE;
+
+  $message = drupal_mail($module, $key, $to, $language, $params, $from, $send);
+
+  $message['subject'] = $subject;
+  $message['body'] = array($output);
+
+  // Retrieve the responsible implementation for this message.
+  $system = drupal_mail_system($module, $key);
+
+  // Format the message body.
+  $message = $system->format($message);
+
+  // Send e-mail.
+  $message['result'] = $system->mail($message);
+}
+
+/**
+ *  Helper function to return a pretty print of the given array
+ *  
+ *  @param array $array
+ *    The array to print out.
+ *  @return string
+ *    The printed array.
+ */
+function _civicrm_error_parse_array($array) {
+  $output = '';
+
+  foreach ((array)$array as $key => $value) {
+    if (is_array($value) || is_object($value)) {
+      $value = print_r($value, TRUE);
+    }
+    $key = str_pad($key .':', 20, ' ');
+    $output .= $key . (string)_civicrm_error_check_length($value) ." \n";
+  }
+  return $output ."\n";
+}
+
+/**
+ *  Helper function to add elipses and return spaces if null
+ *  
+ *  @param string $item
+ *    String to check.
+ *  @return string
+ *    The truncated string.
+ */
+function _civicrm_error_check_length($item) {
+  if (is_null($item)) {
+    return ' ';
+  }
+  if (strlen($item) > 2000) {
+    $item = substr($item, 0, 2000) .'...';
+  }
+  return $item;
+}
+
+/**
+ * Settings page
+ * 
+ * @ingroup forms
+ */
+function civicrm_error_settings() {
+  $form['civicrm_error_to'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Email'),
+    '#maxlength' => 255,
+    '#default_value' => variable_get('civicrm_error_to', variable_get("site_mail", ini_get("sendmail_from"))),
+    '#description' => t("Select an email address to send all CiviCRM errors to. You can enter multiple addresses by separating them with a comma. Ex: foo@example.org, bar@example.org."),
+    '#required' => TRUE,
+  );
+
+  $form['civicrm_error_subject_length'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Error message lenght in subject'),
+    '#maxlength' => 5,
+    '#size' => 5,
+    '#default_value' => variable_get('civicrm_error_subject_length', 25),
+    '#description' => t("Length of the error message included in the message subject. If you do not want to include the error in the subject, enter 0."),
+    '#required' => TRUE,
+  );
+
+  // A set of options to try and handle transparently a few types of errors
+  // in order to reduce the quantity of false alerts.
+
+  // Contributions with no HTTP_REFERER: most often bots or restored sessions.
+  $form['civicrm_error_fallback_contrib_noreferer'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Error fallback for Contributions when there is no HTTP_REFERER'),
+    '#description' => t("Most often, these types of errors can be caused by people who either restored their browser session after closing it, or shared the link of the page after they completed their contribution (instead of using the social media links)."),
+  );
+
+  $form['civicrm_error_fallback_contrib_noreferer']['civicrm_error_fallback_contrib_noreferer_handle'] = array(
+    '#type' => 'radios',
+    '#title' => t('Transparently redirect:'),
+    '#options' => array(
+      0 => t('Do nothing, show the CiviCRM error.'),
+      1 => t('Redirect to the front page (recommended, to avoid confusion if you have multiple contribution pages).'),
+      2 => t('Redirect to a specific contribution page.'),
+    ),
+    '#default_value' => variable_get('civicrm_error_fallback_contrib_noreferer_handle', 0),
+  );
+
+  $options = civicrm_error_contribution_pages_list();
+
+  $form['civicrm_error_fallback_contrib_noreferer']['civicrm_error_fallback_contrib_noreferer_dest'] = array(
+    '#type' => 'select',
+    '#title' => t('Transparently redirect to this form:'),
+    '#options' => $options,
+    '#default_value' => variable_get('civicrm_error_fallback_contrib_noreferer_dest', 0),
+    '#states' => array(
+      'visible' => array(
+        ':input[name="civicrm_error_fallback_contrib_noreferer_handle"]' => array('value' => 2),
+      ),
+    ),
+  );
+
+  $form['civicrm_error_fallback_contrib_noreferer']['civicrm_error_fallback_contrib_noreferer_alert'] = array(
+    '#type' => 'radios',
+    '#title' => t('Send error reports for this error?'),
+    '#options' => array(
+      0 => t('no'),
+      1 => t('yes'),
+    ),
+    '#default_value' => variable_get('civicrm_error_fallback_contrib_noreferer_alert', 1),
+  );
+
+  // PCP form with no "component": most often bots crawling old PCP "new campaign" links from CiviCRM <= 4.0
+  // The "component" variable was added in 4.1, now that Events also supports PCP.
+  $form['civicrm_error_fallback_pcp_nocomponent'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Error fallback for PCP forms when there is no component'),
+    '#description' => t("Usually bots crawling old PCP forms to create a new campaign on a site upgraded from CiviCRM 4.0. In CiviCRM 4.1, a 'component' variable was added to specify whether it is a form related to CiviContribute or CiviEvent."),
+  );
+
+  $form['civicrm_error_fallback_pcp_nocomponent']['civicrm_error_fallback_pcp_nocomponent_handle'] = array(
+    '#type' => 'radios',
+    '#title' => t('Transparently redirect:'),
+    '#options' => array(
+      0 => t('Do nothing, show the CiviCRM error.'),
+      1 => t('Redirect to the front page (recommended if your PCP campaigns are not active at the moment).'),
+      2 => t('Redirect to the same page, with component=contribute.'),
+    ),
+    '#default_value' => variable_get('civicrm_error_fallback_pcp_nocomponent_handle', 0),
+  );
+
+  $form['civicrm_error_fallback_pcp_nocomponent']['civicrm_error_fallback_pcp_nocomponent_alert'] = array(
+    '#type' => 'radios',
+    '#title' => t('Send error reports for this error?'),
+    '#options' => array(
+      0 => t('no'),
+      1 => t('yes'),
+    ),
+    '#default_value' => variable_get('civicrm_error_fallback_pcp_nocomponent_alert', 1),
+  );
+
+  return system_settings_form($form);
+}
+
+/**
+ * Returns an array of CiviCRM Contribution pages.
+ */
+function civicrm_error_contribution_pages_list() {
+  civicrm_initialize(TRUE);
+
+  $options = array(
+    0 => t('- select -'),
+  );
+
+  // not really necessary since CiviCRM autoloads since 4.2, kept for older versions
+  require_once "CRM/Contribute/DAO/ContributionPage.php";
+
+  $dao = new CRM_Contribute_DAO_ContributionPage();
+  $dao->find();
+
+  while ($dao->fetch()) {
+    $options[$dao->id] = $dao->title . ' (' . $dao->id . ')';
+  }
+
+  return $options;
+}
+
