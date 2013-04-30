@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/admin/reporterror</path>
+    <title>Error Reporting Settings</title>
+    <page_callback>CRM_Admin_Form_Setting_ReportError</page_callback>
+    <adminGroup>System Settings</adminGroup>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
+</menu>

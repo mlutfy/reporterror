@@ -80,6 +80,17 @@ function reporterror_civicrm_managed(&$entities) {
 }
 
 /**
+ * Implementation of hook_civicrm_navigationMenu
+ */
+function reporterror_civicrm_navigationMenu( &$params ) {
+  _reporterror_civix_insert_navigationMenu($params, 'Administer/System Settings', array(
+    'name'      => 'Error Report Settings',
+    'url'        => 'civicrm/admin/reporterror',
+    'permission' => 'administer CiviCRM',
+  ));
+}
+
+/**
  *  Custom error function
  *  Set CiviCRM » Administer CiviCRM » Global Settings » Debugging » Fatal Error Handler
  *  to use this function.
@@ -101,7 +112,7 @@ function reporterror_civicrm_handler($vars) {
   if ($arg[0] == 'civicrm' && $arg[1] == 'contribute' && $arg[2] == 'transact' && ! $_SERVER['HTTP_REFERER']) {
     $handle = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, 'noreferer_handle');
     $pageid = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, 'noreferer_pageid');
-    $sendreport = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, 'noreferer_pageid', NULL, 1);
+    $sendreport = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, 'noreferer_sendreport', NULL, 1);
 
     if ($handle == 1 || ($handle == 2 && ! $pageid)) {
       $redirect_path = CRM_Utils_System::baseCMSURL();
