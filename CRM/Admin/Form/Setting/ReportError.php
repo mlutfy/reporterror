@@ -39,29 +39,30 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     $element =& $this->add('text',
       'mailto',
       ts('Error Report Recipient'),
-      $this->_values['mailto'],
+      CRM_Utils_Array::value('mailto', $this->_values),
       true);
 
     $results = civicrm_api('ContributionPage', 'get', array('version' => 3, 'is_active' => 1));
+    $contribution_pages = array();
     if($results['is_error'] == 0) {
-      $contribution_pages = $results['values'];
-    }
-    else {
-      $contribution_pages = array();
+      foreach ($results['values'] as $val) {
+        $contribution_pages[$val['id']] = $val['title'];
+      }
     }
 
     $contribution_pages = array_merge(array(0 => ts('-Select-')), $contribution_pages);
     // The <br /> is because we do not know how else to do that!
     $radio_choices = array(
-      '0' => ts('do nothing (show the CiviCRM error)<br />', array('domain' => 'ca.bidon.reporterror')),
-      '1' => ts('redirect to front page of CMS (recommended to avoid confusion to users)<br />', array('domain' => 'ca.bidon.reporterror')),
-      '2' => ts('redirect to a specific contribution page', array('domain' => 'ca.bidon.reporterror'))
+      '0' => ts('Do nothing (show the CiviCRM error)', array('domain' => 'ca.bidon.reporterror')),
+      '1' => ts('Redirect to front page of CMS (recommended to avoid confusion to users)', array('domain' => 'ca.bidon.reporterror')),
+      '2' => ts('Redirect to a specific contribution page', array('domain' => 'ca.bidon.reporterror'))
     );
 
     $element = $this->addRadio('noreferer_handle',
       ts('Enable transparent redirection?', array('domain' => 'ca.bidon.reporterror')),
       $radio_choices,
-      array('options_per_line' => 1)
+      array('options_per_line' => 1),
+      '<br />'
      );
     /* delete if yesno works
     array(
@@ -122,10 +123,15 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     // store the submitted values in an array
     $params = $this->exportValues();
 
-    // we will return to this form
-    $session = CRM_Core_Session::singleton();
-    $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin/reporterror', $resetStr));
+    $fields = array('noreferer_handle', 'noreferer_pageid', 'noreferer_sendreport', 'mailto');
 
+    foreach ($fields as $field) {
+    	$value = $params[$field];
+    	$result = CRM_Core_BAO_Setting::setItem($value, REPORTERROR_SETTINGS_GROUP, $field);
+    }  
+
+    // we will return to this form by default
+    CRM_Core_Session::setStatus(ts('Settings saved.', array('domain' => 'ca.bidon.reporterror')));
 
   } //end of function
 
