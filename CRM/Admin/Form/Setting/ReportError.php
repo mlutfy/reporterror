@@ -51,11 +51,11 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     }
 
     $contribution_pages = array_merge(array(0 => ts('-Select-')), $contribution_pages);
-    //
+    // The <br /> is because we do not know how else to do that!
     $radio_choices = array(
       '0' => ts('do nothing (show the CiviCRM error)<br />', array('domain' => 'ca.bidon.reporterror')),
       '1' => ts('redirect to front page of CMS (recommended to avoid confusion to users)<br />', array('domain' => 'ca.bidon.reporterror')),
-      '2' => ts('redirect to a specific contribution page<br />', array('domain' => 'ca.bidon.reporterror'))
+      '2' => ts('redirect to a specific contribution page', array('domain' => 'ca.bidon.reporterror'))
     );
 
     $element = $this->addRadio('noreferer_handle',
