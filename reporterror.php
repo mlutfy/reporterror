@@ -4,6 +4,7 @@ require_once 'reporterror.civix.php';
 
 define('REPORTERROR_CIVICRM_SUBJECT_LEN', 100);
 define('REPORTERROR_SETTINGS_GROUP', 'ReportError Extension');
+define('REPORTERROR_EMAIL_SEPARATOR', ',');
 
 /**
  * Implementation of hook_civicrm_config
@@ -39,6 +40,28 @@ function reporterror_civicrm_install() {
  * Implementation of hook_civicrm_uninstall
  */
 function reporterror_civicrm_uninstall() {
+	// Send final email
+	$subject = ts('CiviCRM Error Report was uninstalled', array('domain' => 'ca.bidon.reporterror'));
+	$output = $subject . _reporterror_civicrm_get_session_info();
+	$to = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, 'mailto');
+
+	if (!empty($to)) {
+		$destinations = explode(REPORTERROR_SETTINGS_GROUP, $to);
+		$output = reporterror_civicrm_generatereport($site_name, $vars, $redirect_peath);
+	
+		foreach ($destinations as $dest) {
+			$dest = trim($dest);
+			reporterror_civicrm_send_mail($dest, $subject, $output);
+		}
+  }
+	else {
+		CRM_Core_Error::debug_log_message('Report Error Extension could not send since no email address was set.');
+	}
+	
+	// Delete our settings
+	$sql = "DELETE FROM civicrm_setting WHERE = group_name = 'ReportError Extension'";
+	$dao = CRM_Core_DAO::executeQuery($sql);
+	
   return _reporterror_civix_civicrm_uninstall();
 }
 
@@ -164,18 +187,19 @@ function reporterror_civicrm_handler($vars) {
   
     $to = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, 'mailto');
 
-    if (! $to) {
-      // FIXME: log to error log?
-      return;
+    if (!empty($to)) {
+    	$destinations = explode(REPORTERROR_SETTINGS_GROUP, $to);
+    	$output = reporterror_civicrm_generatereport($site_name, $vars, $redirect_peath);
+    	
+    	foreach ($destinations as $dest) {
+    		$dest = trim($dest);
+    		reporterror_civicrm_send_mail($dest, $subject, $output);
+    	}
+    }
+    else {
+    	CRM_Core_Error::debug_log_message('Report Error Extension could not send since no email address was set.');
     }
 
-    $destinations = explode(',', $to);
-    $output = reporterror_civicrm_generatereport($site_name, $vars, $redirect_path);
-  
-    foreach ($destinations as $dest) {
-      $dest = trim($dest);
-      reporterror_civicrm_send_mail($dest, $subject, $output);
-    }
   }
 
   // A redirection avoids displaying the error to the user.
@@ -206,21 +230,7 @@ function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path) {
 
   $output .= print_r($vars, TRUE);
 
-  // User info
-  $session = CRM_Core_Session::singleton();
-  $userId = $session->get('userID');
-  $params = array(
-    'version' => 3,
-    'id' => $userId,
-    'return' => 'id,display_name,email',
-  );
-  $contact = civicrm_api('Contact', 'getsingle', $params);
-  $output .= "\n\n***LOGGED IN USER***\n";
-  $output .= _reporterror_civicrm_parse_array($contact);
-
-  // $_SERVER
-  $output .= "\n\n***SERVER***\n";
-  $output .= _reporterror_civicrm_parse_array($_SERVER);
+  $output .= _reporterror_civicrm_get_session_info();
 
   // Backtrace
   $backtrace = debug_backtrace();
@@ -247,21 +257,23 @@ function reporterror_civicrm_send_mail($to, $subject, $output) {
       $email_struct = reset(CRM_Utils_Array::value('email', $defaults));
       $email = CRM_Utils_Array::value('email', $email_struct);
     }
-    if (!$email) { // FIXME: Just in case ...
-      $email = 'nobody@nowhere.com';
+    if (!$email) {
+      $email = ini_get('sendmail_from');
     }
 
-    $params = array(
-    'from' => $email,
-    'toName' => 'Site Administrator',
-    'toEmail' => $to,
-    'subject' => $subject,
-    'text' => $output,
-  );
-
-  if (!CRM_Utils_Mail::send($params)) {
-    //FIXME: Output an error message to log
-  }
+    if (!email) {
+      $params = array(
+    			'from' => $email,
+    			'toName' => 'Site Administrator',
+    			'toEmail' => $to,
+    			'subject' => $subject,
+    			'text' => $output,
+    	);
+    	$mail_sent = CRM_Utils_Mail::send($params);
+    	if ($mail_sent) {
+    		CRM_Core_Error::debug_log_message('Report Error Extension: Could not send mail');
+    	}	
+    }
 }
 
 /**
@@ -301,5 +313,25 @@ function _reporterror_civicrm_check_length($item) {
     $item = substr($item, 0, 2000) .'...';
   }
   return $item;
+}
+
+function _reporterror_civicrm_get_session_info() {
+	$output = "";
+	// User info
+	$session = CRM_Core_Session::singleton();
+	$userId = $session->get('userID');
+	$params = array(
+			'version' => 3,
+			'id' => $userId,
+			'return' => 'id,display_name,email',
+	);
+	$contact = civicrm_api('Contact', 'getsingle', $params);
+	$output .= "\n\n***LOGGED IN USER***\n";
+	$output .= _reporterror_civicrm_parse_array($contact);
+	
+	// $_SERVER
+	$output .= "\n\n***SERVER***\n";
+	$output .= _reporterror_civicrm_parse_array($_SERVER);
+	return $output;
 }
 
