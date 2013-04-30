@@ -59,7 +59,7 @@ function reporterror_civicrm_uninstall() {
 	}
 	
 	// Delete our settings
-	$sql = "DELETE FROM civicrm_setting WHERE = group_name = 'ReportError Extension'";
+	$sql = "DELETE FROM civicrm_setting WHERE group_name = 'ReportError Extension'";
 	$dao = CRM_Core_DAO::executeQuery($sql);
 	
   return _reporterror_civix_civicrm_uninstall();
