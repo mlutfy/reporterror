@@ -8,9 +8,10 @@
     <author>Mathieu Lutfy</author>
     <email>mathieu@bidon.ca</email>
   </maintainer>
+  <url desc="documentation">https://github.com/mlutfy/ca.bidon.reporterror</url>
   <releaseDate>2013-04-29</releaseDate>
   <version>1.0</version>
-  <develStage>alpha</develStage>
+  <develStage>beta</develStage>
   <compatibility>
     <ver>4.2</ver>
     <ver>4.3</ver>
