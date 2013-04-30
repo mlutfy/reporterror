@@ -107,7 +107,7 @@ function reporterror_civicrm_managed(&$entities) {
  */
 function reporterror_civicrm_navigationMenu( &$params ) {
   _reporterror_civix_insert_navigationMenu($params, 'Administer/System Settings', array(
-    'name'      => 'Error Report Settings',
+    'name'      => 'Report Error Settings',
     'url'        => 'civicrm/admin/reporterror',
     'permission' => 'administer CiviCRM',
   ));
