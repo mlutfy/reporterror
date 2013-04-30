@@ -51,16 +51,17 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     }
 
     $contribution_pages = array_merge(array(0 => ts('-Select-')), $contribution_pages);
-
+    //
     $radio_choices = array(
-      '0' => ts('do nothing (show the CiviCRM error)', array('domain' => 'ca.bidon.reporterror')),
-      '1' => ts('redirect to front page of CMS (recommended to avoid confusion to users)', array('domain' => 'ca.bidon.reporterror')),
-      '2' => ts('redirect to a specific contribution page', array('domain' => 'ca.bidon.reporterror'))
+      '0' => ts('do nothing (show the CiviCRM error)<br />', array('domain' => 'ca.bidon.reporterror')),
+      '1' => ts('redirect to front page of CMS (recommended to avoid confusion to users)<br />', array('domain' => 'ca.bidon.reporterror')),
+      '2' => ts('redirect to a specific contribution page<br />', array('domain' => 'ca.bidon.reporterror'))
     );
 
     $element = $this->addRadio('noreferer_handle',
       ts('Enable transparent redirection?', array('domain' => 'ca.bidon.reporterror')),
-      $radio_choices
+      $radio_choices,
+      array('options_per_line' => 1)
      );
     /* delete if yesno works
     array(
@@ -73,7 +74,7 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     );
     */
     $element = $this->addYesNo('noreferer_sendreport',
-      ts('Send error reports for this error?', array('domain' => 'ca.bidon.reporterror'))
+      ts('Send error reports for this particular error?', array('domain' => 'ca.bidon.reporterror'))
     );
 
     $element = $this->add('select',
