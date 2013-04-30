@@ -176,7 +176,7 @@ function _reporterror_civix_glob($pattern) {
  * $item - menu you need to insert (parent/child attributes will be filled for you)
  * $parentId - used internally to recurse in the menu structure
  */
-function _reporterror_civix_insert_navigationMenu(&$config = NULL) {
+function _reporterror_civix_insert_navigationMenu(&$menu, $path, $item, $parentId = null) {
   static $navId;
 
   // If we are done going down the path, insert menu
