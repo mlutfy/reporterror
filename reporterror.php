@@ -46,9 +46,7 @@ function reporterror_civicrm_uninstall() {
 	$to = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, 'mailto');
 
 	if (!empty($to)) {
-		$destinations = explode(REPORTERROR_SETTINGS_GROUP, $to);
-		$output = reporterror_civicrm_generatereport($site_name, $vars, $redirect_peath);
-	
+		$destinations = explode(REPORTERROR_SETTINGS_GROUP, $to);	
 		foreach ($destinations as $dest) {
 			$dest = trim($dest);
 			reporterror_civicrm_send_mail($dest, $subject, $output);
@@ -144,28 +142,6 @@ function reporterror_civicrm_handler($vars) {
       $redirect_path = CRM_Utils_System::url('civicrm/contribute/transact', 'reset=1&id='.$pageid);
     }
   }
-
-  /*
-  if (arg(0) == 'civicrm' && arg(1) == 'contribute' && arg(2) == 'campaign' && ! isset($_REQUEST['component'])) {
-    $handle = variable_get('civicrm_error_fallback_pcp_nocomponent_handle', 0);
-    $pageid = $_REQUEST['pageId'];
-
-    if ($handle == 1) {
-      $redirect_path = '<front>';
-    }
-    elseif ($handle == 2) {
-      $redirect_path = 'civicrm/contribute/campaign';
-      $redirect_options['query'] = array(
-        'reset' => 1,
-        'action' => 'add',
-        'pageId' => $pageid,
-        'component' => 'contribute',
-      );
-    }
-
-    $sendreport = variable_get('civicrm_error_fallback_pcp_nocomponent_alert', 1);
-  }
-  */
 
   // Send email report
   if ($sendreport) {
