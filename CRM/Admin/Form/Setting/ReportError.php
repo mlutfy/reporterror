@@ -64,16 +64,7 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
       array('options_per_line' => 1),
       '<br />'
      );
-    /* delete if yesno works
-    array(
-      '0' => ts('no', array('domain' => 'ca.bidon.reporterror')),
-      '1' => ts('yes', array('domain' => 'ca.bidon.reporterror'))
-    )
-     $element =& $this->addRadio('noreferer_sendreport',
-      ts('Send error reports for this error?', array('domain' => 'ca.bidon.reporterror')),
 
-    );
-    */
     $element = $this->addYesNo('noreferer_sendreport',
       ts('Send error reports for this particular error?', array('domain' => 'ca.bidon.reporterror'))
     );
@@ -83,7 +74,6 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
       ts('Redirect to Contribution Page', array('domain' => 'ca.bidon.reporterror')),
       $contribution_pages,
       true);
-
 
     $this->addRule('mailto', ts('Please enter a valid email address.',
       array('domain' => 'ca.bidon.reporterror')), 'email');
