@@ -223,33 +223,30 @@ function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path) {
  * Send the e-mail using CRM_Utils_Mail::send()
  */
 function reporterror_civicrm_send_mail($to, $subject, $output) {
-    if ($domain_id = CRM_Core_Config::domainID()) {
-      // Gather information from domain settings
-      $params = array('id' => $domain_id);
-      CRM_Core_BAO_Domain::retrieve($params, $domain);
-      unset($params['id']);
-      $locParams = $params + array('entity_id' => $domain_id, 'entity_table' => 'civicrm_domain');
-      $defaults = CRM_Core_BAO_Location::getValues($locParams);
-      $email_struct = reset(CRM_Utils_Array::value('email', $defaults));
-      $email = CRM_Utils_Array::value('email', $email_struct);
-    }
-    if (!$email) {
-      $email = ini_get('sendmail_from');
-    }
+	$mail_sent = FALSE;
+	if ($domain_id = CRM_Core_Config::domainID()) {
+    // Gather information from domain settings
+    $email_id = CRM_Core_OptionGroup::getDefaultValue('from_email_address');
+		$email_full = CRM_Core_OptionGroup::getLabel('from_email_address', $email_id, TRUE); //$all_emails[$email_id]['label'];     
+  }
+  if (!$email_full) {
+    $email_full = ini_get('sendmail_from');
+  }
 
-    if (!email) {
-      $params = array(
-    			'from' => $email,
-    			'toName' => 'Site Administrator',
-    			'toEmail' => $to,
-    			'subject' => $subject,
-    			'text' => $output,
-    	);
-    	$mail_sent = CRM_Utils_Mail::send($params);
-    	if ($mail_sent) {
-    		CRM_Core_Error::debug_log_message('Report Error Extension: Could not send mail');
-    	}	
-    }
+	if ($email_full) {
+		$params = array(
+			'from' => $email_full,
+			'toName' => 'Site Administrator',
+			'toEmail' => $to,
+			'subject' => $subject,
+			'text' => $output,
+		);
+		$mail_sent = CRM_Utils_Mail::send($params);
+	}
+	if (!$mail_sent) {
+		CRM_Core_Error::debug_log_message('Report Error Extension: Could not send mail');
+	}
+	return $mail_sent;
 }
 
 /**
