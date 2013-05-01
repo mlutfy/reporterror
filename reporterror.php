@@ -165,7 +165,7 @@ function reporterror_civicrm_handler($vars) {
 
     if (!empty($to)) {
     	$destinations = explode(REPORTERROR_SETTINGS_GROUP, $to);
-    	$output = reporterror_civicrm_generatereport($site_name, $vars, $redirect_peath);
+    	$output = reporterror_civicrm_generatereport($site_name, $vars, $redirect_path);
     	
     	foreach ($destinations as $dest) {
     		$dest = trim($dest);
@@ -220,7 +220,7 @@ function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path) {
 }
 
 /**
- * Send the e-mail using drupal_mail()
+ * Send the e-mail using CRM_Utils_Mail::send()
  */
 function reporterror_civicrm_send_mail($to, $subject, $output) {
     if ($domain_id = CRM_Core_Config::domainID()) {
@@ -291,6 +291,12 @@ function _reporterror_civicrm_check_length($item) {
   return $item;
 }
 
+/**
+ *  Helper function to get user session info for email body.
+ *
+ *  @return string
+ *    Partial email body string with user session info.
+ */
 function _reporterror_civicrm_get_session_info() {
 	$output = "";
 	// User info
