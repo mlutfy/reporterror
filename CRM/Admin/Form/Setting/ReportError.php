@@ -24,7 +24,7 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
   protected $_scheduledJob;
 
   function preProcess() {
-    // Needs to be here as from is build before default values are set
+    // Needs to be here as form is built before default values are set
     $this->_values = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP);
   }
 
