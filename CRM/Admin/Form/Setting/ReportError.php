@@ -111,18 +111,17 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
    */
   public function postProcess() {
     // store the submitted values in an array
-    $params = $this->exportValues();
+    $values = $this->exportValues();
 
     $fields = array('noreferer_handle', 'noreferer_pageid', 'noreferer_sendreport', 'mailto');
 
     foreach ($fields as $field) {
-    	$value = $params[$field];
-    	$result = CRM_Core_BAO_Setting::setItem($value, REPORTERROR_SETTINGS_GROUP, $field);
-    }  
+      $value = $values[$field];
+      $result = CRM_Core_BAO_Setting::setItem($value, REPORTERROR_SETTINGS_GROUP, $field);
+    }
 
     // we will return to this form by default
-    CRM_Core_Session::setStatus(ts('Settings saved.', array('domain' => 'ca.bidon.reporterror')));
+    CRM_Core_Session::setStatus(ts('Settings saved.', array('domain' => 'ca.bidon.reporterror')), '', 'success');
+  }
+}
 
-  } //end of function
-
-} // end class
