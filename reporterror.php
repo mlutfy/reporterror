@@ -226,7 +226,7 @@ function reporterror_civicrm_send_mail($to, $subject, $output) {
   $email = '';
 
   try {
-    $result = civicrm_api3('OptionValue', 'get', array('option_group_name' => 'from_email_address'));
+    $result = civicrm_api3('OptionValue', 'get', array('option_group_name' => 'from_email_address', 'is_default' => TRUE));
 
     $val = array_pop($result['values']);
     $email = $val['label'];
