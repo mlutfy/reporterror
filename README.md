@@ -13,13 +13,13 @@ This utility will send you a detailed email when a CiviCRM fatal error occurs.
 
 The extension can also offer to try to resolve some common errors:
 
+* For contribution pages where the session has expired or the contribution
+  page URL is truncated, you can choose to gracefully redirect CiviCRM
+  errors to the site CMS default page, a specific contribution page or not
+  at all. You also have the option of not getting emails on contribution
+  page redirects (since crawlers can make them rather frequent).
 
-
-For contribution pages where the session has expired or the contribution
-page URL is truncated, you can choose to gracefully redirect CiviCRM
-errors to the site CMS default page, a specific contribution page or not
-at all. You also have the option of not getting emails on contribution
-page redirects.
+* more to come?
 
 To get the latest version of this module:
 https://github.com/mlutfy/ca.bidon.reporterror
@@ -38,13 +38,15 @@ Requirements
 ------------
 
 - CiviCRM >= 4.2
+- Tested with CiviCRM 4.2 to 4.4.
 
 Contributors
 ------------
 
 * CiviCRM extension/integration written & maintained by Mathieu Lutfy (Nodisys),
   co-authored by Lola S (Freeform), Nicolas Ganivet (CiviDesk) and Young-Jin Kim (Emphanos).
-* Based on the civicrm_error Drupal module initially written by Dave Hansen-Lange (dalin).
+* Based on the civicrm_error Drupal module initially written by Dave Hansen-Lange (dalin):
+  https://drupal.org/project/civicrm_error
 
 Support
 -------
