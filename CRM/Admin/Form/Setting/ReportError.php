@@ -1,7 +1,8 @@
 <?php
+
 /*
  +--------------------------------------------------------------------------+
- | Copyright IT Bliss LLC (c) 2012-2013                                     |
+ | Copyright CiviCRM LLC (c) 2012-2013                                      |
  +--------------------------------------------------------------------------+
  | This program is free software: you can redistribute it and/or modify     |
  | it under the terms of the GNU Affero General Public License as published |
@@ -20,8 +21,6 @@
 
 class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
   protected $_values;
-  protected $_oauth_ok;
-  protected $_scheduledJob;
 
   function preProcess() {
     // Needs to be here as form is built before default values are set
@@ -36,13 +35,15 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
    */
   public function buildQuickForm() {
     $this->applyFilter('__ALL__', 'trim');
-    $element =& $this->add('text',
+
+    $element = $this->add('text',
       'mailto',
-      ts('Error Report Recipient'),
+      ts('Error Report Recipient', array('domain' => 'ca.bidon.reporterror')),
       CRM_Utils_Array::value('mailto', $this->_values),
       true);
 
     $results = civicrm_api('ContributionPage', 'get', array('version' => 3, 'is_active' => 1));
+
     $contribution_pages = array();
     if($results['is_error'] == 0) {
       foreach ($results['values'] as $val) {
@@ -51,10 +52,10 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     }
 
     $contribution_pages = array_merge(array(0 => ts('-Select-')), $contribution_pages);
-    // The <br /> is because we do not know how else to do that!
+
     $radio_choices = array(
       '0' => ts('Do nothing (show the CiviCRM error)', array('domain' => 'ca.bidon.reporterror')),
-      '1' => ts('Redirect to front page of CMS (recommended to avoid confusion to users)', array('domain' => 'ca.bidon.reporterror')),
+      '1' => ts('Redirect to front page of CMS', array('domain' => 'ca.bidon.reporterror')),
       '2' => ts('Redirect to a specific contribution page', array('domain' => 'ca.bidon.reporterror'))
     );
 
@@ -62,7 +63,7 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
       ts('Enable transparent redirection?', array('domain' => 'ca.bidon.reporterror')),
       $radio_choices,
       array('options_per_line' => 1),
-      '<br />'
+      '<br/>' /* one option per line */
      );
 
     $element = $this->addYesNo('noreferer_sendreport',
@@ -95,13 +96,6 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     $defaults = $this->_values;
     return $defaults;
   }
-
-  /**
-   * Function to validate the form
-   *
-   * @access public
-   * @return None
-   */
 
   /**
    * Function to process the form
