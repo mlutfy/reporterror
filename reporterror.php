@@ -223,15 +223,17 @@ function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path) {
  * Send the e-mail using CRM_Utils_Mail::send()
  */
 function reporterror_civicrm_send_mail($to, $subject, $output) {
-  if ($domain_id = CRM_Core_Config::domainID()) {
-    // Gather information from domain settings
-    $params = array('id' => $domain_id);
-    CRM_Core_BAO_Domain::retrieve($params, $domain);
-    unset($params['id']);
-    $locParams = $params + array('entity_id' => $domain_id, 'entity_table' => 'civicrm_domain');
-    $defaults = CRM_Core_BAO_Location::getValues($locParams);
-    $email_struct = reset(CRM_Utils_Array::value('email', $defaults));
-    $email = CRM_Utils_Array::value('email', $email_struct);
+  $email = '';
+
+  try {
+    $result = civicrm_api3('OptionValue', 'get', array('option_group_name' => 'from_email_address'));
+
+    $val = array_pop($result['values']);
+    $email = $val['label'];
+  }
+  catch (Exception $e) {
+    CRM_Core_Error::debug_log_message('Report Error Extension: failed to get the default from email address');
+    return;
   }
 
   if (! $email) {
