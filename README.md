@@ -21,7 +21,7 @@ The extension can also offer to try to resolve some common errors:
 
 * more to come?
 
-To get the latest version of this module:
+To get the latest version of this module:  
 https://github.com/mlutfy/ca.bidon.reporterror
 
 Distributed under the terms of the GNU Affero General public license (AGPL).
@@ -45,28 +45,28 @@ Contributors
 
 * CiviCRM extension/integration written & maintained by Mathieu Lutfy (Nodisys),
   co-authored by Lola S (Freeform), Nicolas Ganivet (CiviDesk) and Young-Jin Kim (Emphanos).
-* Based on the civicrm_error Drupal module initially written by Dave Hansen-Lange (dalin):
+* Based on the civicrm_error Drupal module initially written by Dave Hansen-Lange (dalin):  
   https://drupal.org/project/civicrm_error
 
 Support
 -------
 
-Please post bug reports in the issue tracker of this project on github:
+Please post bug reports in the issue tracker of this project on github:  
 https://github.com/mlutfy/ca.bidon.reporterror/issues
 
-For general support questions, please use the CiviCRM Extensions forum:
+For general support questions, please use the CiviCRM Extensions forum:  
 http://forum.civicrm.org/index.php/board,57.0.html
 
 This is a community contributed extension written thanks to the financial
 support of organisations using it, as well as the very helpful and collaborative
 CiviCRM community.
 
-If you appreciate this module, please consider donating 10$ to the CiviCRM project:
+If you appreciate this module, please consider donating 10$ to the CiviCRM project:  
 http://civicrm.org/participate/support-civicrm
 
 While I do my best to provide volunteer support for this extension, please
 consider financially contributing to support or development of this extension
-if you can.
+if you can.  
 http://www.nodisys.ca/en
 
 Copyright
@@ -74,8 +74,8 @@ Copyright
 
 License: AGPL 3
 
-Copyright (C) 2012-2013 CiviCRM LLC (info@civicrm.org)
+Copyright (C) 2012-2013 CiviCRM LLC (info@civicrm.org)  
 http://www.civicrm.org
 
-Copyright (C) 2012-2013 Mathieu Lutfy (mathieu@bidon.ca)
+Copyright (C) 2012-2013 Mathieu Lutfy (mathieu@bidon.ca)  
 http://www.nodisys.ca/en
