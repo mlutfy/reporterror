@@ -113,9 +113,10 @@ function reporterror_civicrm_navigationMenu( &$params ) {
 }
 
 /**
- *  Custom error function
- *  Set CiviCRM » Administer CiviCRM » Global Settings » Debugging » Fatal Error Handler
- *  to use this function.
+ * Custom error handler.
+ * This is registered as a callback in hook_civicrm_config().
+ *
+ * @param $vars Array with the 'message' and 'code' of the error.
  */
 function reporterror_civicrm_handler($vars) {
   $sendreport = TRUE;
@@ -209,8 +210,13 @@ function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path) {
   $output .= _reporterror_civicrm_get_session_info();
 
   // Backtrace
-  $backtrace = debug_backtrace();
   $output .= "\n\n***BACKTRACE***\n";
+
+  $backtrace = debug_backtrace();
+  $output .= CRM_Core_Error::formatBacktrace($backtrace, TRUE, 120);
+
+  $output .= "\n\n***FULL BACKTRACE***\n";
+
   foreach ($backtrace as $call) {
     $output .= "**next call**\n";
     $output .= _reporterror_civicrm_parse_array($call);
