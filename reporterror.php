@@ -233,22 +233,23 @@ function reporterror_civicrm_send_mail($to, $subject, $output) {
     $email_struct = reset(CRM_Utils_Array::value('email', $defaults));
     $email = CRM_Utils_Array::value('email', $email_struct);
   }
-  if (!$email) {
-    $email = ini_get('sendmail_from');
+
+  if (! $email) {
+    return;
   }
 
-  if (!email) {
-    $params = array(
-      'from' => $email,
-      'toName' => 'Site Administrator',
-      'toEmail' => $to,
-      'subject' => $subject,
-      'text' => $output,
-    );
-    $mail_sent = CRM_Utils_Mail::send($params);
-    if ($mail_sent) {
-      CRM_Core_Error::debug_log_message('Report Error Extension: Could not send mail');
-    }
+  $params = array(
+    'from' => $email,
+    'toName' => 'Site Administrator',
+    'toEmail' => $to,
+    'subject' => $subject,
+    'text' => $output,
+  );
+
+  $mail_sent = CRM_Utils_Mail::send($params);
+
+  if (! $mail_sent) {
+    CRM_Core_Error::debug_log_message('Report Error Extension: Could not send mail');
   }
 }
 

@@ -4,8 +4,8 @@
   <table class="form-layout-compressed" style="width:100%;">
     <tr class="crm-reporterror-form-block">
       <td class="label">{$form.mailto.label}</td>
-      <td>{$form.mailto.html}<br />
-        <span class="description">{ts}This usually is your domain administrator's email. Separate multiple email addresses with ','.{/ts}</span></td>
+      <td>{$form.mailto.html}
+        <div class="description">{ts}This usually is your domain administrator's email. Separate multiple email addresses with a comma (','). If left empty, no e-mails will be sent.{/ts}</div></td>
     </tr>
   </table>
   <h3>{ts domain='ca.bidon.reporterror'}Contribution pages with no referrer{/ts}</h3>
