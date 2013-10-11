@@ -19,7 +19,9 @@ The extension can also offer to try to resolve some common errors:
   at all. You also have the option of not getting emails on contribution
   page redirects (since crawlers can make them rather frequent).
 
-* more to come?
+* Redirects Contribution PCP create pages missing the "component" variable
+  automatically to component=contribute (this was added in CiviCRM 4.1, so
+  crawlers visiting old links would generate a lot of errors).
 
 To get the latest version of this module:  
 https://github.com/mlutfy/ca.bidon.reporterror

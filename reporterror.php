@@ -177,8 +177,15 @@ function reporterror_civicrm_handler($vars) {
       $redirect_path = CRM_Utils_System::baseCMSURL();
     }
     elseif ($handle == 2) {
-      $redirect_path = CRM_Utils_System::url('civicrm/contribute/transact', 'reset=1&id='.$pageid);
+      $redirect_path = CRM_Utils_System::url('civicrm/contribute/transact', 'reset=1&id=' . $pageid);
     }
+  }
+
+  // PCP contribute forms: handle the 4.0 -> 4.1 upgrade, where the component variable became mandatory
+  if ($arg[0] == 'civicrm' && $arg[1] == 'contribute' && $arg[2] == 'campaign' && ! isset($_REQUEST['component'])) {
+    $pageid = $_REQUEST['pageId'];
+    $redirect_path = CRM_Utils_System::url('civicrm/contribute/campaign', 'reset=1&action=add&pageId=' . $pageid . '&component=contribute');
+    $sendreport = FALSE;
   }
 
   // Send email report
