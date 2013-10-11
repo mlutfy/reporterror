@@ -167,6 +167,7 @@ function reporterror_civicrm_handler($vars) {
   $config = CRM_Core_Config::singleton();
   $urlVar = $config->userFrameworkURLVar;
   $arg = explode('/', $_GET[$urlVar]);
+
   // Redirect for Contribution pages without a referrer (close / restore browser page)
   if ($arg[0] == 'civicrm' && $arg[1] == 'contribute' && $arg[2] == 'transact' && ! $_SERVER['HTTP_REFERER']) {
     $handle = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, 'noreferer_handle');
@@ -227,7 +228,11 @@ function reporterror_civicrm_handler($vars) {
     // 307 = temporary redirect. Assuming it reduces the chances that the browser
     // keeps the redirection in cache.
     CRM_Utils_System::redirect($redirect_path);
+    return TRUE;
   }
+
+  // We let CiviCRM display the regular fatal error
+  return FALSE;
 }
 
 /**
