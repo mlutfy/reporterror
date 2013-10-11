@@ -27,6 +27,20 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     $this->_values = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP);
   }
 
+  function setDefaultValues() {
+    $defaults = $this->_values;
+
+    if (! CRM_Utils_Array::value('show_full_backtrace', $defaults)) {
+      $defaults['show_full_backtrace'] = FALSE;
+    }
+
+    if (! CRM_Utils_Array::value('show_post_data', $defaults)) {
+      $defaults['show_post_data'] = FALSE;
+    }
+
+    return $defaults;
+  }
+
   /**
    * Function to build the form
    *
@@ -42,6 +56,11 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
       CRM_Utils_Array::value('mailto', $this->_values),
       true);
 
+    $this->addYesNo('show_full_backtrace', ts('Display a full backtrace in e-mails?', array('domain' => 'ca.bidon.reporterror')));
+
+    $this->addYesNo('show_post_data', ts('Display POST data in e-mails?', array('domain' => 'ca.bidon.reporterror')));
+
+    // Get a list of contribution pages
     $results = civicrm_api('ContributionPage', 'get', array('version' => 3, 'is_active' => 1));
 
     $contribution_pages = array();
@@ -92,11 +111,6 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     ));
   }
 
-  function setDefaultValues() {
-    $defaults = $this->_values;
-    return $defaults;
-  }
-
   /**
    * Function to process the form
    *
@@ -107,7 +121,7 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     // store the submitted values in an array
     $values = $this->exportValues();
 
-    $fields = array('noreferer_handle', 'noreferer_pageid', 'noreferer_sendreport', 'mailto');
+    $fields = array('noreferer_handle', 'noreferer_pageid', 'noreferer_sendreport', 'mailto', 'show_full_backtrace', 'show_post_data');
 
     foreach ($fields as $field) {
       $value = $values[$field];

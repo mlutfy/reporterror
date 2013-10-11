@@ -227,6 +227,9 @@ function reporterror_civicrm_handler($vars) {
  * Returns a plain text output for the e-mail report.
  */
 function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path) {
+  $show_full_backtrace = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, 'show_full_backtrace');
+  $show_post_data = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, 'show_post_data');
+
   $output = ts('There was a CiviCRM error at %1.', array(1 => $site_name)) . "\n";
   $output .= ts('Date: %1', array(1 => date('c'))) . "\n\n";
 
@@ -251,11 +254,19 @@ function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path) {
   $backtrace = debug_backtrace();
   $output .= CRM_Core_Error::formatBacktrace($backtrace, TRUE, 120);
 
-  $output .= "\n\n***FULL BACKTRACE***\n";
+  // $_POST
+  if ($show_post_data) {
+    $output .= "\n\n***POST***\n";
+    $output .= _reporterror_civicrm_parse_array($_POST);
+  }
 
-  foreach ($backtrace as $call) {
-    $output .= "**next call**\n";
-    $output .= _reporterror_civicrm_parse_array($call);
+  if ($show_full_backtrace) {
+    $output .= "\n\n***FULL BACKTRACE***\n";
+
+    foreach ($backtrace as $call) {
+      $output .= "**next call**\n";
+      $output .= _reporterror_civicrm_parse_array($call);
+    }
   }
 
   return $output;
