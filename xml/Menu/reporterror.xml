@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <menu>
   <item>
-    <path>civicrm/admin/reporterror</path>
+    <path>civicrm/admin/setting/reporterror</path>
     <title>Report Error Settings</title>
     <page_callback>CRM_Admin_Form_Setting_ReportError</page_callback>
     <adminGroup>System Settings</adminGroup>

@@ -68,6 +68,9 @@ function reporterror_civicrm_uninstall() {
  * Implementation of hook_civicrm_enable
  */
 function reporterror_civicrm_enable() {
+  // rebuild the menu so our path is picked up
+  CRM_Core_Invoke::rebuildMenuAndCaches();
+
   return _reporterror_civix_civicrm_enable();
 }
 
@@ -104,12 +107,45 @@ function reporterror_civicrm_managed(&$entities) {
 /**
  * Implementation of hook_civicrm_navigationMenu
  */
-function reporterror_civicrm_navigationMenu( &$params ) {
+function reporterror_civicrm_navigationMenu(&$params) {
+/*
   _reporterror_civix_insert_navigationMenu($params, 'Administer/System Settings', array(
     'name'      => 'Report Error Settings',
     'url'        => 'civicrm/admin/reporterror',
     'permission' => 'administer CiviCRM',
   ));
+*/
+
+  // Get the ID of the 'Administer/System Settings' menu
+  $adminMenuId = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_Navigation', 'Administer', 'id', 'name');
+  $settingsMenuId = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_Navigation', 'System Settings', 'id', 'name');
+
+  // Skip adding menu if there is no administer menu
+  if (! $adminMenuId) {
+    CRM_Core_Error::debug_log_message('Report Error Extension could not find the Administer menu item. Menu item to configure this extension will not be added.');
+    return;
+  }
+
+  if (! $settingsMenuId) {
+    CRM_Core_Error::debug_log_message('Report Error Extension could not find the System Settings menu item. Menu item to configure this extension will not be added.');
+    return;
+  }
+
+  // get the maximum key under administer menu
+  $maxSettingsMenuKey = max(array_keys($params[$adminMenuId]['child'][$settingsMenuId]['child']));
+  $nextSettingsMenuKey = $maxSettingsMenuKey + 1;
+
+  $params[$adminMenuId]['child'][$settingsMenuId]['child'][$nextSettingsMenuKey] =  array(
+    'attributes' => array(
+      'name'       => 'Report Error Settings',
+      'label'      => 'Report Error Settings',
+      'url'        => 'civicrm/admin/setting/reporterror&reset=1',
+      'permission' => 'administer CiviCRM',
+      'parentID'   => $settingsMenuId,
+      'navID'      => $nextSettingsMenuKey,
+      'active'      => 1,
+    ),
+  );
 }
 
 /**
