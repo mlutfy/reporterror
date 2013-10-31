@@ -290,7 +290,7 @@ function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path) {
 function reporterror_civicrm_send_mail($to, $subject, $output) {
   $email = '';
 
-  $result = civicrm_api('OptionValue', 'get', array('option_group_name' => 'from_email_address', 'is_default' => TRUE));
+  $result = civicrm_api('OptionValue', 'get', array('option_group_name' => 'from_email_address', 'is_default' => TRUE, 'version' => 3));
 
   if ($result['is_error']) {
     CRM_Core_Error::debug_log_message('Report Error Extension: failed to get the default from email address');
