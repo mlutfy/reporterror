@@ -95,9 +95,6 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
       $contribution_pages,
       true);
 
-    $this->addRule('mailto', ts('Please enter a valid email address.',
-      array('domain' => 'ca.bidon.reporterror')), 'email');
-
     $this->addButtons(array(
       array(
         'type' => 'submit',
