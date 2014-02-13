@@ -63,14 +63,15 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     // Get a list of contribution pages
     $results = civicrm_api('ContributionPage', 'get', array('version' => 3, 'is_active' => 1));
 
-    $contribution_pages = array();
+    $contribution_pages = array(
+      0 => ts('-Select-'),
+    );
+
     if($results['is_error'] == 0) {
       foreach ($results['values'] as $val) {
         $contribution_pages[$val['id']] = $val['title'];
       }
     }
-
-    $contribution_pages = array_merge(array(0 => ts('-Select-')), $contribution_pages);
 
     $radio_choices = array(
       '0' => ts('Do nothing (show the CiviCRM error)', array('domain' => 'ca.bidon.reporterror')),
