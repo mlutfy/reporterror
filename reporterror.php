@@ -139,7 +139,7 @@ function reporterror_civicrm_navigationMenu(&$params) {
     'attributes' => array(
       'name'       => 'Report Error Settings',
       'label'      => 'Report Error Settings',
-      'url'        => 'civicrm/admin/setting/reporterror&reset=1',
+      'url'        => 'civicrm/admin/setting/reporterror?reset=1',
       'permission' => 'administer CiviCRM',
       'parentID'   => $settingsMenuId,
       'navID'      => $nextSettingsMenuKey,
