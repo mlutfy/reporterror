@@ -28,7 +28,7 @@ See LICENSE.txt for details.
 Installation
 ------------
 
-* Enable this extension in CiviCRM (Administer > System Settings > Extensions)
+* Enable this extension in CiviCRM (Administer > System Settings > Manage Extensions)
 * A new menu item will be added in Administer > System Settings > Report Errors,
   which you can use to access the extensions settings form.
 
@@ -36,12 +36,12 @@ Requirements
 ------------
 
 - CiviCRM >= 4.2
-- Tested with CiviCRM 4.2 to 4.4.
+- Tested with CiviCRM 4.4 to 4.6.
 
 Contributors
 ------------
 
-* CiviCRM extension/integration written & maintained by Mathieu Lutfy (Nodisys),
+* CiviCRM extension/integration written & maintained by Mathieu Lutfy (Coop SymbioTIC),
   co-authored by Lola S (Freeform), Nicolas Ganivet (CiviDesk) and Young-Jin Kim (Emphanos).
 * Based on the civicrm_error Drupal module initially written by Dave Hansen-Lange (dalin):  
   https://drupal.org/project/civicrm_error
@@ -65,15 +65,15 @@ http://civicrm.org/participate/support-civicrm
 While I do my best to provide volunteer support for this extension, please
 consider financially contributing to support or development of this extension
 if you can.  
-http://www.nodisys.ca/en
+https://www.symbiotic.coop
 
 Copyright
 ---------
 
 License: AGPL 3
 
-Copyright (C) 2012-2013 CiviCRM LLC (info@civicrm.org)  
+Copyright (C) 2012-2015 CiviCRM LLC (info@civicrm.org)  
 http://www.civicrm.org
 
-Copyright (C) 2012-2013 Mathieu Lutfy (mathieu@nodisys.ca)  
-http://www.nodisys.ca/en
+Copyright (C) 2012-2015 Mathieu Lutfy (mathieu@symbiotic.coop)  
+https://www.symbiotic.coop
