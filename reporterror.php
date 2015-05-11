@@ -330,16 +330,26 @@ function reporterror_civicrm_send_mail($to, $subject, $output) {
 function _reporterror_civicrm_parse_array($array) {
   $output = '';
 
-  foreach ((array)$array as $key => $value) {
+  $array = (array) $array;
+
+  foreach ($array as $key => $value) {
     if (is_array($value) || is_object($value)) {
       $value = print_r($value, TRUE);
     }
 
-    $key = str_pad($key .':', 20, ' ');
-    $output .= $key . (string)_reporterror_civicrm_check_length($value) ." \n";
+    $key = str_pad($key . ':', 20, ' ');
+    $output .= $key . _reporterror_civicrm_check_length($value) . "\n";
   }
 
-  return $output ."\n";
+  // Remove sensitive data.
+  // We do this hackishly this way, because:
+  // - doing a search/replace in the $array can cause changes in the $_SESSION, for example, because of references.
+  // - re-writing print_r() seemed a bit ambitious, and likely to introduce bugs.
+  $output = preg_replace('/\[credit_card_number\] => (\d{6})\d+/', '[credit_card_number] => \1[removed]', $output);
+  $output = preg_replace('/\[cvv2\] => \d+/', '[cvv2] => [removed]', $output);
+  $output = preg_replace('/\[password\] => [^\s]+/', '[password] => [removed]', $output);
+
+  return $output . "\n";
 }
 
 /**
@@ -359,7 +369,7 @@ function _reporterror_civicrm_check_length($item) {
     $item = substr($item, 0, 2000) .'...';
   }
 
-  return $item;
+  return (string) $item;
 }
 
 /**
