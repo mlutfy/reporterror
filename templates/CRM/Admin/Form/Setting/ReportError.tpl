@@ -5,18 +5,24 @@
     <tr class="crm-reporterror-form-block">
       <td class="label">{$form.mailto.label}</td>
       <td>{$form.mailto.html}
-        <div class="description">{ts}This usually is your domain administrator's email. Separate multiple email addresses with a comma (','). If left empty, no e-mails will be sent.{/ts}</div></td>
+        <div class="description">{ts domain="ca.bidon.reporterror"}This usually is your domain administrator's email. Separate multiple email addresses with a comma (','). If left empty, no e-mails will be sent.{/ts}</div></td>
     </tr>
     <tr class="crm-reporterror-form-block">
       <td class="label">{$form.show_full_backtrace.label}</td>
       <td>{$form.show_full_backtrace.html}
-        <div class="description">The full backtrace can provide more information on the variables passed to each function, but could expose more sensitive information.</div>
+        <div class="description">{ts domain='ca.bidon.reporterror'}The full backtrace can provide more information on the variables passed to each function, but could expose more sensitive information.{/ts}</div>
       </td>
     </tr>
     <tr class="crm-reporterror-form-block">
       <td class="label">{$form.show_post_data.label}</td>
       <td>{$form.show_post_data.html}
-        <div class="description">POST data is usually the data submitted in forms. This can include sensitive information.</div>
+        <div class="description">{ts domain='ca.bidon.reporterror'}POST data is usually the data submitted in forms. This can include sensitive information.{/ts}</div>
+      </td>
+    </tr>
+    <tr class="crm-reporterror-form-block">
+      <td class="label">{$form.show_session_data.label}</td>
+      <td>{$form.show_session_data.html}
+        <div class="description">{ts domain='ca.bidon.reporterror'}Session data can provide clues, but should probably be disabled most of the time, as it can include sensitive information.{/ts}</div>
       </td>
     </tr>
   </table>

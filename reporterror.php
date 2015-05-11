@@ -154,7 +154,7 @@ function reporterror_civicrm_navigationMenu(&$params) {
  *
  * @param $vars Array with the 'message' and 'code' of the error.
  */
-function reporterror_civicrm_handler($vars) {
+function reporterror_civicrm_handler($vars, $options_overrides = array()) {
   $sendreport = TRUE;
   $redirect_path = NULL;
   $redirect_options = array();
@@ -170,9 +170,9 @@ function reporterror_civicrm_handler($vars) {
 
   // Redirect for Contribution pages without a referrer (close / restore browser page)
   if ($arg[0] == 'civicrm' && $arg[1] == 'contribute' && $arg[2] == 'transact' && ! $_SERVER['HTTP_REFERER']) {
-    $handle = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, 'noreferer_handle');
-    $pageid = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, 'noreferer_pageid');
-    $sendreport = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, 'noreferer_sendreport', NULL, 1);
+    $handle = reporterror_setting_get('noreferer_handle', $options_overrides);
+    $pageid = reporterror_setting_get('noreferer_pageid', $options_overrides);
+    $sendreport = reporterror_setting_get('noreferer_sendreport', $options_overrides, 1);
 
     if ($handle == 1 || ($handle == 2 && ! $pageid)) {
       $redirect_path = CRM_Utils_System::baseCMSURL();
@@ -200,7 +200,7 @@ function reporterror_civicrm_handler($vars) {
       $subject .= ' (' . substr($vars['message'], 0, $len) . ')';
     }
 
-    $to = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, 'mailto');
+    $to = reporterror_setting_get('mailto', $options_overrides);
 
     if (!empty($to)) {
       $destinations = explode(REPORTERROR_SETTINGS_GROUP, $to);
@@ -231,9 +231,10 @@ function reporterror_civicrm_handler($vars) {
 /**
  * Returns a plain text output for the e-mail report.
  */
-function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path) {
-  $show_full_backtrace = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, 'show_full_backtrace');
-  $show_post_data = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, 'show_post_data');
+function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path, $options_overrides = array()) {
+  $show_full_backtrace = reporterror_setting_get('show_full_backtrace', $options_overrides);
+  $show_post_data = reporterror_setting_get('show_post_data', $options_overrides);
+  $show_session_data = reporterror_setting_get('show_session_data', $options_overrides);
 
   $output = ts('There was a CiviCRM error at %1.', array(1 => $site_name)) . "\n";
   $output .= ts('Date: %1', array(1 => date('c'))) . "\n\n";
@@ -244,15 +245,20 @@ function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path) {
   }
 
   // Error details
+  $output .= "\n\n***ERROR***\n";
+  $output .= _reporterror_civicrm_parse_array($vars);
+
+  // The "last error" can sometimes help, but it can also mislead
+  // (ex: PHP notice during the error).
   if (function_exists('error_get_last')) {
-    $output .= "***ERROR***\n";
+    $output .= "***LAST ERROR***\n";
     $output .= print_r(error_get_last(), TRUE);
   }
 
-  $output .= print_r($vars, TRUE);
-
   // User information and the session variable
-  $output .= _reporterror_civicrm_get_session_info();
+  if ($show_session_data) {
+    $output .= _reporterror_civicrm_get_session_info();
+  }
 
   // Backtrace
   $output .= "\n\n***BACKTRACE***\n";
@@ -402,5 +408,22 @@ function _reporterror_civicrm_get_session_info() {
   $output .= "\n\n***SERVER***\n";
   $output .= _reporterror_civicrm_parse_array($_SERVER);
   return $output;
+}
+
+/**
+ * Helper function to get a specific setting of the extension,
+ * or lookup an override option.
+ *
+ * Option overrides is an array of settings that the calling function
+ * can set to override the behavior of the report. For example, if a
+ * payment processor caught an exception doing a curl/soap request, it
+ * will probably want to disable the full backtrace and session info.
+ */
+function reporterror_setting_get($name, $options_overrides, $default = NULL) {
+  if (isset($options_overrides[$name])) {
+    return $options_overrides[$name];
+  }
+
+  return CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, $name, NULL, $default);
 }
 

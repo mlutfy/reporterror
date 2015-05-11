@@ -57,8 +57,8 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
       true);
 
     $this->addYesNo('show_full_backtrace', ts('Display a full backtrace in e-mails?', array('domain' => 'ca.bidon.reporterror')));
-
     $this->addYesNo('show_post_data', ts('Display POST data in e-mails?', array('domain' => 'ca.bidon.reporterror')));
+    $this->addYesNo('show_session_data', ts('Display session data in e-mails?', array('domain' => 'ca.bidon.reporterror')));
 
     // Get a list of contribution pages
     $results = civicrm_api('ContributionPage', 'get', array('version' => 3, 'is_active' => 1));
@@ -119,7 +119,7 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     // store the submitted values in an array
     $values = $this->exportValues();
 
-    $fields = array('noreferer_handle', 'noreferer_pageid', 'noreferer_sendreport', 'mailto', 'show_full_backtrace', 'show_post_data');
+    $fields = array('noreferer_handle', 'noreferer_pageid', 'noreferer_sendreport', 'mailto', 'show_full_backtrace', 'show_post_data', 'show_session_data');
 
     foreach ($fields as $field) {
       $value = $values[$field];
