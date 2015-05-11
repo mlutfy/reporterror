@@ -203,8 +203,8 @@ function reporterror_civicrm_handler($vars, $options_overrides = array()) {
     $to = reporterror_setting_get('mailto', $options_overrides);
 
     if (!empty($to)) {
-      $destinations = explode(REPORTERROR_SETTINGS_GROUP, $to);
-      $output = reporterror_civicrm_generatereport($site_name, $vars, $redirect_path);
+      $destinations = explode(REPORTERROR_EMAIL_SEPARATOR, $to);
+      $output = reporterror_civicrm_generatereport($site_name, $vars, $redirect_path, $options_overrides);
 
       foreach ($destinations as $dest) {
         $dest = trim($dest);
