@@ -251,6 +251,7 @@ function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path) {
 
   $output .= print_r($vars, TRUE);
 
+  // User information and the session variable
   $output .= _reporterror_civicrm_get_session_info();
 
   // Backtrace
@@ -367,15 +368,35 @@ function _reporterror_civicrm_get_session_info() {
   // User info
   $session = CRM_Core_Session::singleton();
   $userId = $session->get('userID');
-  $params = array(
-    'version' => 3,
-    'id' => $userId,
-    'return' => 'id,display_name,email',
-  );
 
-  $contact = civicrm_api('Contact', 'getsingle', $params);
-  $output .= "\n\n***LOGGED IN USER***\n";
-  $output .= _reporterror_civicrm_parse_array($contact);
+  if ($userId) {
+    $output .= "\n\n***LOGGED IN USER***\n";
+
+    $params = array(
+      'version' => 3,
+      'id' => $userId,
+      'return' => 'id,display_name,email',
+    );
+
+    $contact = civicrm_api('Contact', 'getsingle', $params);
+
+    if ($contact['is_error']) {
+      $output .= "Failed to fetch user info using the API:\n";
+    }
+
+    $output .= _reporterror_civicrm_parse_array($contact);
+  }
+  else {
+    // Show the remote IP and user-agent of anon users, to facilitate
+    // identification of bots and other source of false positives.
+    $output .= "\n\n***ANONYMOUS USER***\n";
+  }
+
+  $output .= "REMOTE_ADDR: " . $_SERVER['REMOTE_ADDR'] . "\n";
+  $output .= "HTTP_USER_AGENT: " . $_SERVER['HTTP_USER_AGENT'] . "\n";
+
+  $output .= "\n\n***SESSION***\n";
+  $output .= _reporterror_civicrm_parse_array($_SESSION);
 
   // $_SERVER
   $output .= "\n\n***SERVER***\n";
