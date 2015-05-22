@@ -19,6 +19,8 @@ The extension can also offer to try to resolve some common errors:
   at all. You also have the option of not getting emails on contribution
   page redirects (since crawlers can make them rather frequent).
 
+* Detect bots and optionally generate a 404 http response instead of 'OK'.
+
 To get the latest version of this module:  
 https://github.com/mlutfy/ca.bidon.reporterror
 
@@ -63,8 +65,9 @@ If you appreciate this module, please consider donating 10$ to the CiviCRM proje
 http://civicrm.org/participate/support-civicrm
 
 While I do my best to provide volunteer support for this extension, please
-consider financially contributing to support or development of this extension
-if you can.  
+consider financially contributing to support and further develop this extension.
+
+Commercial support is available through Coop SymbioTIC:  
 https://www.symbiotic.coop
 
 Copyright
