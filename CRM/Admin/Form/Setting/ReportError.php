@@ -30,13 +30,11 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
   function setDefaultValues() {
     $defaults = $this->_values;
 
-    if (! CRM_Utils_Array::value('show_full_backtrace', $defaults)) {
-      $defaults['show_full_backtrace'] = FALSE;
-    }
-
-    if (! CRM_Utils_Array::value('show_post_data', $defaults)) {
-      $defaults['show_post_data'] = FALSE;
-    }
+    $defaults['show_full_backtrace'] = CRM_Utils_Array::value('show_full_backtrace', $defaults, FALSE);
+    $defaults['show_post_data'] = CRM_Utils_Array::value('show_post_data', $defaults, FALSE);
+    $defaults['bots_sendreport'] = CRM_Utils_Array::value('bots_sendreport', $defaults, FALSE);
+    $defaults['bots_404'] = CRM_Utils_Array::value('bots_404', $defaults, FALSE);
+    $defaults['bots_regexp'] = CRM_Utils_Array::value('bots_regexp', $defaults, '(Googlebot|bingbot)');
 
     return $defaults;
   }
@@ -50,8 +48,7 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
   public function buildQuickForm() {
     $this->applyFilter('__ALL__', 'trim');
 
-    $element = $this->add('text',
-      'mailto',
+    $this->add('text', 'mailto',
       ts('Error Report Recipient', array('domain' => 'ca.bidon.reporterror')),
       CRM_Utils_Array::value('mailto', $this->_values),
       true);
@@ -64,7 +61,7 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     $results = civicrm_api('ContributionPage', 'get', array('version' => 3, 'is_active' => 1));
 
     $contribution_pages = array(
-      0 => ts('-Select-'),
+      0 => ts('- Select -'),
     );
 
     if($results['is_error'] == 0) {
@@ -79,22 +76,26 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
       '2' => ts('Redirect to a specific contribution page', array('domain' => 'ca.bidon.reporterror'))
     );
 
-    $element = $this->addRadio('noreferer_handle',
+    $this->addRadio('noreferer_handle',
       ts('Enable transparent redirection?', array('domain' => 'ca.bidon.reporterror')),
       $radio_choices,
       array('options_per_line' => 1),
       '<br/>' /* one option per line */
      );
 
-    $element = $this->addYesNo('noreferer_sendreport',
-      ts('Send error reports for this particular error?', array('domain' => 'ca.bidon.reporterror'))
-    );
+    $this->addYesNo('noreferer_sendreport', ts('Send error reports for this particular error?', array('domain' => 'ca.bidon.reporterror')));
 
-    $element = $this->add('select',
-      'noreferer_pageid',
+    $this->add('select', 'noreferer_pageid',
       ts('Redirect to Contribution Page', array('domain' => 'ca.bidon.reporterror')),
       $contribution_pages,
-      true);
+      TRUE);
+
+    $this->addYesNo('bots_sendreport', ts('Send error reports for errors caused by bots?', array('domain' => 'ca.bidon.reporterror')), FALSE, TRUE);
+    $this->addYesNo('bots_404', ts('Respond with a 404 page not found error?', array('domain' => 'ca.bidon.reporterror')), FALSE, TRUE);
+
+    $this->add('text', 'bots_regexp',
+      ts('Bots to ignore', array('domain' => 'ca.bidon.reporterror')),
+      TRUE);
 
     $this->addButtons(array(
       array(
@@ -119,7 +120,18 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     // store the submitted values in an array
     $values = $this->exportValues();
 
-    $fields = array('noreferer_handle', 'noreferer_pageid', 'noreferer_sendreport', 'mailto', 'show_full_backtrace', 'show_post_data', 'show_session_data');
+    $fields = array(
+      'noreferer_handle',
+      'noreferer_pageid',
+      'noreferer_sendreport',
+      'mailto',
+      'show_full_backtrace',
+      'show_post_data',
+      'show_session_data',
+      'bots_sendreport',
+      'bots_404',
+      'bots_regexp',
+    );
 
     foreach ($fields as $field) {
       $value = $values[$field];

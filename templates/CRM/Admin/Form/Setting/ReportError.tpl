@@ -26,7 +26,11 @@
       </td>
     </tr>
   </table>
+
   <h3>{ts domain='ca.bidon.reporterror'}Contribution pages with no referrer{/ts}</h3>
+
+  <p>{ts domain='ca.bidon.reporterror'}Sometimes users might restore their browser session or share the link of the contribution 'thank you' page, which will result in a fatal error. You can use the options below to redirect visitors to a more relevant location.{/ts}</p>
+
   <table class="form-layout-compressed" style="width:100%;">
     <tr class="crm-reporterror-form-block">
       <td class="label">{$form.noreferer_sendreport.label}</td>
@@ -39,6 +43,33 @@
     <tr class="crm-reporterror-form-block">
       <td class="label">{$form.noreferer_pageid.label}</td>
       <td>{$form.noreferer_pageid.html}</td>
+    </tr>
+  </table>
+
+  <h3>Bots and crawlers</h3>
+
+  <p>{ts domain='ca.bidon.reporterror'}Web crawlers used by search engines can often generate a lot of errors. In some cases, this might be because you have invalid links, but in most cases, the bots are just being annoying and crawling where they shouldn't.{/ts}</p>
+
+  <table class="form-layout-compressed" style="width:100%;">
+    <tr class="crm-reporterror-form-block">
+      <td class="label">{$form.bots_sendreport.label}</td>
+      <td>
+        {$form.bots_sendreport.html}
+      </td>
+    </tr>
+    <tr class="crm-reporterror-form-block">
+      <td class="label">{$form.bots_404.label}</td>
+      <td>
+        {$form.bots_404.html}
+        <p class="description">By default, CiviCRM always responds '200 OK', even if there was a fatal error. By responding to the request with a '404 not found' code, the bot is less likely to try again.</p>
+      </td>
+    </tr>
+    <tr class="crm-reporterror-form-block">
+      <td class="label">{$form.bots_regexp.label}</td>
+      <td>
+        {$form.bots_regexp.html}
+        <p class="description">{ts domain='ca.bidon.reporterror' 1='(Googlebot|bingbot)'}If in doubt, leave this as is. The default is: !1{/ts}</p>
+      </td>
     </tr>
   </table>
 

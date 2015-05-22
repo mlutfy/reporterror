@@ -156,6 +156,8 @@ function reporterror_civicrm_navigationMenu(&$params) {
  */
 function reporterror_civicrm_handler($vars, $options_overrides = array()) {
   $sendreport = TRUE;
+  $generate_404 = FALSE;
+
   $redirect_path = NULL;
   $redirect_options = array();
 
@@ -182,6 +184,26 @@ function reporterror_civicrm_handler($vars, $options_overrides = array()) {
     }
   }
 
+  // Identify and possibly ignore bots
+  $is_bot = FALSE;
+  $bots_regexp = reporterror_setting_get('bots_regexp', $options_overrides);
+
+  if ($bots_regexp && preg_match('/' . $bots_regexp . '/', $_SERVER['HTTP_USER_AGENT'])) {
+    $is_bot = TRUE;
+
+    $bots_sendreport = reporterror_setting_get('bots_sendreport', $options_overrides);
+    $bots_404 = reporterror_setting_get('bots_404', $options_overrides);
+
+    if (! $bots_sendreport) {
+      $sendreport = FALSE;
+    }
+
+    if ($bots_404) {
+      $generate_404 = TRUE;
+    }
+
+  }
+
   // Send email report
   if ($sendreport) {
     $domain = CRM_Core_BAO_Domain::getDomain();
@@ -189,8 +211,18 @@ function reporterror_civicrm_handler($vars, $options_overrides = array()) {
 
     $len = REPORTERROR_CIVICRM_SUBJECT_LEN;
 
+    $extra_info = array();
+
     if ($redirect_path) {
-      $subject = ts('CiviCRM error [redirected] at %1', array(1 => $site_name, 'domain' => 'ca.bidon.reporterror'));
+      $extra_info[] = ts('redirected', array('domain' => 'ca.bidon.reporterror'));
+    }
+
+    if ($is_bot) {
+      $extra_info[] = ts('bot', array('domain' => 'ca.bidon.reporterror'));
+    }
+
+    if (count($extra_info)) {
+      $subject = ts('CiviCRM error [%2] at %1', array(1 => $site_name, 2 => implode(',', $extra_info), 'domain' => 'ca.bidon.reporterror'));
     }
     else {
       $subject = ts('CiviCRM error at %1', array(1 => $site_name, 'domain' => 'ca.bidon.reporterror'));
@@ -213,6 +245,39 @@ function reporterror_civicrm_handler($vars, $options_overrides = array()) {
     }
     else {
       CRM_Core_Error::debug_log_message('Report Error Extension could not send since no email address was set.');
+    }
+  }
+
+  if ($generate_404) {
+    $config = CRM_Core_Config::singleton();
+
+    switch ($config->userFramework) {
+      case 'Drupal':
+      case 'Drupal6':
+        drupal_not_found();
+        drupal_exit();
+        break;
+
+      case 'Drupal8':
+        // TODO: not tested.
+        // use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+        // throw new NotFoundHttpException();
+        break;
+
+      case 'WordPress':
+        // TODO: not tested.
+        global $wp_query;
+        $wp_query->set_404();
+        status_header(404);
+        break;
+
+      case 'Joomla':
+        // TODO: not tested.
+        header("HTTP/1.0 404 Not Found");
+        break;
+
+      default:
+        header("HTTP/1.0 404 Not Found");
     }
   }
 
@@ -256,9 +321,7 @@ function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path, $
   }
 
   // User information and the session variable
-  if ($show_session_data) {
-    $output .= _reporterror_civicrm_get_session_info();
-  }
+  $output .= _reporterror_civicrm_get_session_info($show_session_data);
 
   // Backtrace
   $output .= "\n\n***BACKTRACE***\n";
@@ -378,7 +441,7 @@ function _reporterror_civicrm_check_length($item) {
  *  @return string
  *    Partial email body string with user session info.
  */
-function _reporterror_civicrm_get_session_info() {
+function _reporterror_civicrm_get_session_info($show_session_data = FALSE) {
   $output = '';
 
   // User info
@@ -411,8 +474,10 @@ function _reporterror_civicrm_get_session_info() {
   $output .= "REMOTE_ADDR: " . $_SERVER['REMOTE_ADDR'] . "\n";
   $output .= "HTTP_USER_AGENT: " . $_SERVER['HTTP_USER_AGENT'] . "\n";
 
-  $output .= "\n\n***SESSION***\n";
-  $output .= _reporterror_civicrm_parse_array($_SESSION);
+  if ($show_session_data) {
+    $output .= "\n\n***SESSION***\n";
+    $output .= _reporterror_civicrm_parse_array($_SESSION);
+  }
 
   // $_SERVER
   $output .= "\n\n***SERVER***\n";
