@@ -51,7 +51,7 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     $this->add('text', 'mailto',
       ts('Error Report Recipient', array('domain' => 'ca.bidon.reporterror')),
       CRM_Utils_Array::value('mailto', $this->_values),
-      true);
+      FALSE);
 
     $this->addYesNo('show_full_backtrace', ts('Display a full backtrace in e-mails?', array('domain' => 'ca.bidon.reporterror')));
     $this->addYesNo('show_post_data', ts('Display POST data in e-mails?', array('domain' => 'ca.bidon.reporterror')));
