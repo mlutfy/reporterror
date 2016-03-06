@@ -46,6 +46,25 @@
     </tr>
   </table>
 
+  <h3>{ts domain='ca.bidon.reporterror'}Event registration pages with no referrer{/ts}</h3>
+
+  <p>{ts domain='ca.bidon.reporterror'}Sometimes users might restore their browser session or share the link of the event confirmation page, which will result in a fatal error. You can use the options below to redirect visitors to a more relevant location.{/ts}</p>
+
+  <table class="form-layout-compressed" style="width:100%;">
+    <tr class="crm-reporterror-form-block">
+      <td class="label">{$form.noreferer_sendreport_event.label}</td>
+      <td>{$form.noreferer_sendreport_event.html}</td>
+    </tr>
+    <tr class="crm-reporterror-form-block">
+      <td class="label">{$form.noreferer_handle_event.label}</td>
+      <td>{$form.noreferer_handle_event.html}</td>
+    </tr>
+    <tr class="crm-reporterror-form-block">
+      <td class="label">{$form.noreferer_handle_eventid.label}</td>
+      <td>{$form.noreferer_handle_eventid.html}</td>
+    </tr>
+  </table>
+
   <h3>Bots and crawlers</h3>
 
   <p>{ts domain='ca.bidon.reporterror'}Web crawlers used by search engines can often generate a lot of errors. In some cases, this might be because you have invalid links, but in most cases, the bots are just being annoying and crawling where they shouldn't.{/ts}</p>

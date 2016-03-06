@@ -57,8 +57,9 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     $this->addYesNo('show_post_data', ts('Display POST data in e-mails?', array('domain' => 'ca.bidon.reporterror')));
     $this->addYesNo('show_session_data', ts('Display session data in e-mails?', array('domain' => 'ca.bidon.reporterror')));
 
+    // Special handling of Contribution page errors.
     // Get a list of contribution pages
-    $results = civicrm_api('ContributionPage', 'get', array('version' => 3, 'is_active' => 1));
+    $results = civicrm_api3('ContributionPage', 'get', array('is_active' => 1));
 
     $contribution_pages = array(
       0 => ts('- Select -'),
@@ -90,6 +91,40 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
       $contribution_pages,
       TRUE);
 
+    // Special handling of Event page errors.
+    $results = civicrm_api3('Event', 'get', array('is_active' => 1));
+
+    $event_pages = array(
+      0 => ts('- Select -'),
+    );
+
+    if($results['is_error'] == 0) {
+      foreach ($results['values'] as $val) {
+        $event_pages[$val['id']] = $val['title'];
+      }
+    }
+
+    $radio_choices = array(
+      '0' => ts('Do nothing (show the CiviCRM error)', array('domain' => 'ca.bidon.reporterror')),
+      '1' => ts('Redirect to front page of CMS', array('domain' => 'ca.bidon.reporterror')),
+      '2' => ts('Redirect to a specific event registration page', array('domain' => 'ca.bidon.reporterror'))
+    );
+
+    $this->addRadio('noreferer_handle_event',
+      ts('Enable transparent redirection?', array('domain' => 'ca.bidon.reporterror')),
+      $radio_choices,
+      array('options_per_line' => 1),
+      '<br/>' /* one option per line */
+     );
+
+    $this->addYesNo('noreferer_sendreport_event', ts('Send error reports for this particular error?', array('domain' => 'ca.bidon.reporterror')));
+
+    $this->add('select', 'noreferer_handle_eventid',
+      ts('Redirect to Event Page', array('domain' => 'ca.bidon.reporterror')),
+      $event_pages,
+      TRUE);
+
+    // Special handling of bots
     $this->addYesNo('bots_sendreport', ts('Send error reports for errors caused by bots?', array('domain' => 'ca.bidon.reporterror')), FALSE, TRUE);
     $this->addYesNo('bots_404', ts('Respond with a 404 page not found error?', array('domain' => 'ca.bidon.reporterror')), FALSE, TRUE);
 
@@ -124,6 +159,9 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
       'noreferer_handle',
       'noreferer_pageid',
       'noreferer_sendreport',
+      'noreferer_handle_event',
+      'noreferer_handle_eventid',
+      'noreferer_sendreport_event',
       'mailto',
       'show_full_backtrace',
       'show_post_data',

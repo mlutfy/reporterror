@@ -183,6 +183,18 @@ function reporterror_civicrm_handler($vars, $options_overrides = array()) {
       $redirect_path = CRM_Utils_System::url('civicrm/contribute/transact', 'reset=1&id=' . $pageid);
     }
   }
+  elseif ($arg[0] == 'civicrm' && $arg[1] == 'event' && ! $_SERVER['HTTP_REFERER'] && $_SERVER['REQUEST_METHOD'] != 'HEAD') {
+    $handle = reporterror_setting_get('noreferer_handle_event', $options_overrides);
+    $pageid = reporterror_setting_get('noreferer_handle_eventid', $options_overrides);
+    $sendreport = reporterror_setting_get('noreferer_sendreport_event', $options_overrides, 1);
+
+    if ($handle == 1 || ($handle == 2 && ! $pageid)) {
+      $redirect_path = CRM_Utils_System::baseCMSURL();
+    }
+    elseif ($handle == 2) {
+      $redirect_path = CRM_Utils_System::url('civicrm/event/register', 'reset=1&id=' . $pageid);
+    }
+  }
 
   // Identify and possibly ignore bots
   $is_bot = FALSE;
