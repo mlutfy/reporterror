@@ -87,7 +87,7 @@
       <td class="label">{$form.bots_regexp.label}</td>
       <td>
         {$form.bots_regexp.html}
-        <p class="description">{ts domain='ca.bidon.reporterror' 1='(Googlebot|bingbot)'}If in doubt, leave this as is. The default is: !1{/ts}</p>
+        <p class="description">{ts domain='ca.bidon.reporterror' 1='(Googlebot|bingbot|python|Baiduspider|Yandex)'}If in doubt, leave this as is. The default is: !1{/ts}</p>
       </td>
     </tr>
   </table>

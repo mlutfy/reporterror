@@ -34,7 +34,7 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     $defaults['show_post_data'] = CRM_Utils_Array::value('show_post_data', $defaults, FALSE);
     $defaults['bots_sendreport'] = CRM_Utils_Array::value('bots_sendreport', $defaults, FALSE);
     $defaults['bots_404'] = CRM_Utils_Array::value('bots_404', $defaults, FALSE);
-    $defaults['bots_regexp'] = CRM_Utils_Array::value('bots_regexp', $defaults, '(Googlebot|bingbot|python|Baiduspider)');
+    $defaults['bots_regexp'] = CRM_Utils_Array::value('bots_regexp', $defaults, '(Googlebot|bingbot|python|Baiduspider|Yandex)');
 
     return $defaults;
   }
