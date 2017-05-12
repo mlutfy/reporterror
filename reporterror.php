@@ -54,12 +54,14 @@ function reporterror_civicrm_uninstall() {
   }
 
   // Delete our settings
-  $params = array(
-    1 => array(REPORTERROR_SETTINGS_GROUP, 'String'),
-  );
+  // FIXME: Maybe settings metadata helps? This is redundant.
+  $settings = [ 'show_full_backtrace', 'show_post_data', 'show_session_data', 'noreferer_sendreport', 'noreferer_sendreport_event', 'bots_sendreport', 'bots_404', 'bots_regexp' ];
 
-  $sql = "DELETE FROM civicrm_setting WHERE group_name = %1";
-  $dao = CRM_Core_DAO::executeQuery($sql, $params);
+  foreach ($settings as $val) {
+    CRM_Core_DAO::executeQuery('DELETE FROM civicrm_setting WHERE name = %1', array(
+      1 => array($val, 'String'),
+    ));
+  }
 
   return _reporterror_civix_civicrm_uninstall();
 }
