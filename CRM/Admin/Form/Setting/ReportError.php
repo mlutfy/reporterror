@@ -62,16 +62,17 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
 
     // Special handling of Contribution page errors.
     // Get a list of contribution pages
-    $results = civicrm_api3('ContributionPage', 'get', array('is_active' => 1));
+    $results = civicrm_api3('ContributionPage', 'get', array(
+      'is_active' => 1,
+      'option.limit' => 0,
+    ));
 
     $contribution_pages = array(
       0 => ts('- Select -'),
     );
 
-    if($results['is_error'] == 0) {
-      foreach ($results['values'] as $val) {
-        $contribution_pages[$val['id']] = $val['title'];
-      }
+    foreach ($results['values'] as $val) {
+      $contribution_pages[$val['id']] = CRM_Utils_Array::value('title', $val);
     }
 
     $radio_choices = array(
@@ -95,16 +96,17 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
       TRUE);
 
     // Special handling of Event page errors.
-    $results = civicrm_api3('Event', 'get', array('is_active' => 1));
+    $results = civicrm_api3('Event', 'get', array(
+      'is_active' => 1,
+      'option.limit' => 0,
+    ));
 
     $event_pages = array(
       0 => ts('- Select -'),
     );
 
-    if($results['is_error'] == 0) {
-      foreach ($results['values'] as $val) {
-        $event_pages[$val['id']] = $val['title'];
-      }
+    foreach ($results['values'] as $val) {
+      $event_pages[$val['id']] = CRM_Utils_Array::value('title', $val);
     }
 
     $radio_choices = array(
