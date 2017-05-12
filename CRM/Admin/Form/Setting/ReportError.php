@@ -32,6 +32,9 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
 
     $defaults['show_full_backtrace'] = CRM_Utils_Array::value('show_full_backtrace', $defaults, FALSE);
     $defaults['show_post_data'] = CRM_Utils_Array::value('show_post_data', $defaults, FALSE);
+    $defaults['show_session_data'] = CRM_Utils_Array::value('show_session_data', $defaults, FALSE);
+    $defaults['noreferer_sendreport'] = CRM_Utils_Array::value('noreferer_sendreport', $defaults, TRUE);
+    $defaults['noreferer_sendreport_event'] = CRM_Utils_Array::value('noreferer_sendreport_event', $defaults, TRUE);
     $defaults['bots_sendreport'] = CRM_Utils_Array::value('bots_sendreport', $defaults, FALSE);
     $defaults['bots_404'] = CRM_Utils_Array::value('bots_404', $defaults, FALSE);
     $defaults['bots_regexp'] = CRM_Utils_Array::value('bots_regexp', $defaults, '(Googlebot|bingbot|python|Baiduspider|Yandex)');
