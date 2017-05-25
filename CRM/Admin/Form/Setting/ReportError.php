@@ -165,6 +165,8 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
       'noreferer_handle_event',
       'noreferer_handle_eventid',
       'noreferer_sendreport_event',
+      'reporterror_handle_profile',
+      'reporterror_sendreport_profile',
       'mailto',
       'show_full_backtrace',
       'show_post_data',
