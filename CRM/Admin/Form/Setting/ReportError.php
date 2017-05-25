@@ -13,9 +13,12 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
 
     $defaults['show_full_backtrace'] = CRM_Utils_Array::value('show_full_backtrace', $defaults, FALSE);
     $defaults['show_post_data'] = CRM_Utils_Array::value('show_post_data', $defaults, FALSE);
+    $defaults['show_session_data'] = CRM_Utils_Array::value('show_session_data', $defaults, FALSE);
+    $defaults['noreferer_sendreport'] = CRM_Utils_Array::value('noreferer_sendreport', $defaults, TRUE);
+    $defaults['noreferer_sendreport_event'] = CRM_Utils_Array::value('noreferer_sendreport_event', $defaults, TRUE);
     $defaults['bots_sendreport'] = CRM_Utils_Array::value('bots_sendreport', $defaults, FALSE);
     $defaults['bots_404'] = CRM_Utils_Array::value('bots_404', $defaults, FALSE);
-    $defaults['bots_regexp'] = CRM_Utils_Array::value('bots_regexp', $defaults, '(Googlebot|bingbot)');
+    $defaults['bots_regexp'] = CRM_Utils_Array::value('bots_regexp', $defaults, '(Googlebot|bingbot|python|Baiduspider|Yandex)');
 
     return $defaults;
   }
@@ -40,16 +43,17 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
 
     // Special handling of Contribution page errors.
     // Get a list of contribution pages
-    $results = civicrm_api3('ContributionPage', 'get', array('is_active' => 1));
+    $results = civicrm_api3('ContributionPage', 'get', array(
+      'is_active' => 1,
+      'option.limit' => 0,
+    ));
 
     $contribution_pages = array(
       0 => ts('- Select -'),
     );
 
-    if($results['is_error'] == 0) {
-      foreach ($results['values'] as $val) {
-        $contribution_pages[$val['id']] = $val['title'];
-      }
+    foreach ($results['values'] as $val) {
+      $contribution_pages[$val['id']] = CRM_Utils_Array::value('title', $val);
     }
 
     $radio_choices = array(
@@ -73,16 +77,17 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
       TRUE);
 
     // Special handling of Event page errors.
-    $results = civicrm_api3('Event', 'get', array('is_active' => 1));
+    $results = civicrm_api3('Event', 'get', array(
+      'is_active' => 1,
+      'option.limit' => 0,
+    ));
 
     $event_pages = array(
       0 => ts('- Select -'),
     );
 
-    if($results['is_error'] == 0) {
-      foreach ($results['values'] as $val) {
-        $event_pages[$val['id']] = $val['title'];
-      }
+    foreach ($results['values'] as $val) {
+      $event_pages[$val['id']] = CRM_Utils_Array::value('title', $val);
     }
 
     $radio_choices = array(
