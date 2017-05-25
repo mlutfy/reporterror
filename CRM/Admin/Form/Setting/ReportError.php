@@ -16,6 +16,8 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
     $defaults['show_session_data'] = CRM_Utils_Array::value('show_session_data', $defaults, FALSE);
     $defaults['noreferer_sendreport'] = CRM_Utils_Array::value('noreferer_sendreport', $defaults, TRUE);
     $defaults['noreferer_sendreport_event'] = CRM_Utils_Array::value('noreferer_sendreport_event', $defaults, TRUE);
+    $defaults['reporterror_handle_profile'] = CRM_Utils_Array::value('reporterror_handle_profile', $defaults, FALSE);
+    $defaults['reporterror_sendreport_profile'] = CRM_Utils_Array::value('reporterror_sendreport_profile', $defaults, TRUE);
     $defaults['bots_sendreport'] = CRM_Utils_Array::value('bots_sendreport', $defaults, FALSE);
     $defaults['bots_404'] = CRM_Utils_Array::value('bots_404', $defaults, FALSE);
     $defaults['bots_regexp'] = CRM_Utils_Array::value('bots_regexp', $defaults, '(Googlebot|bingbot|python|Baiduspider|Yandex)');
@@ -109,6 +111,21 @@ class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
       ts('Redirect to Event Page', array('domain' => 'ca.bidon.reporterror')),
       $event_pages,
       TRUE);
+
+    // Special handling of profiles
+    $radio_choices = array(
+      '0' => ts('Do nothing (show the CiviCRM error)', array('domain' => 'ca.bidon.reporterror')),
+      '1' => ts('Redirect to front page of CMS', array('domain' => 'ca.bidon.reporterror')),
+    );
+
+    $this->addRadio('reporterror_handle_profile',
+      ts('Enable transparent redirection?', array('domain' => 'ca.bidon.reporterror')),
+      $radio_choices,
+      array('options_per_line' => 1),
+      '<br/>' /* one option per line */
+     );
+
+    $this->addYesNo('reporterror_sendreport_profile', ts('Send error reports for this particular error?', array('domain' => 'ca.bidon.reporterror')));
 
     // Special handling of bots
     $this->addYesNo('bots_sendreport', ts('Send error reports for errors caused by bots?', array('domain' => 'ca.bidon.reporterror')), FALSE, TRUE);

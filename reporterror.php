@@ -198,6 +198,19 @@ function reporterror_civicrm_handler($vars, $options_overrides = array()) {
     }
   }
 
+  // Profiles reserved to authenticated users
+  if ($arg[0] == 'civicrm' && $arg[1] == 'profile') {
+    $handle = reporterror_setting_get('noreferer_handle_profiles', $options_overrides);
+
+    $redirect_path = CRM_Utils_System::baseCMSURL();
+    $sendreport = FALSE;
+
+    $output = reporterror_civicrm_generatereport($site_name, $vars, $redirect_path, $options_overrides);
+    $log = "Report Error Extension: redirected to home page:\n" . $output;
+
+    CRM_Core_Error::debug_log_message($log);
+  }
+
   // Identify and possibly ignore bots
   $is_bot = FALSE;
   $bots_regexp = reporterror_setting_get('bots_regexp', $options_overrides);

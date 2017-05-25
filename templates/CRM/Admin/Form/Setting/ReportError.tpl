@@ -65,6 +65,21 @@
     </tr>
   </table>
 
+  <h3>{ts domain='ca.bidon.reporterror'}Profile errors{/ts}</h3>
+
+  <p>{ts domain='ca.bidon.reporterror'}Common errors on profiles include: anonymous users cannot view profiles (ex: accessing anything CiviCRM page requires user authentication) or the profile may have been disabled. In most cases, the user rarely needs to know about it. Bots also like to browse profiles, since they do not return proper HTTP error codes when they are disabled. Profiles errors are always logged in the CiviCRM logs (ConfigAndLog).{/ts}</p>
+
+  <table class="form-layout-compressed" style="width:100%;">
+    <tr class="crm-reporterror-form-block">
+      <td class="label">{$form.reporterror_sendreport_profile.label}</td>
+      <td>{$form.reporterror_sendreport_profile.html}</td>
+    </tr>
+    <tr class="crm-reporterror-form-block">
+      <td class="label">{$form.reporterror_handle_profile.label}</td>
+      <td>{$form.reporterror_handle_profile.html}</td>
+    </tr>
+  </table>
+
   <h3>Bots and crawlers</h3>
 
   <p>{ts domain='ca.bidon.reporterror'}Web crawlers used by search engines can often generate a lot of errors. In some cases, this might be because you have invalid links, but in most cases, the bots are just being annoying and crawling where they shouldn't.{/ts}</p>
