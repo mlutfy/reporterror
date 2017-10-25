@@ -1,6 +1,6 @@
 <?php
 
-class CRM_Admin_Form_Setting_ReportError extends CRM_Admin_Form_Setting {
+class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
   protected $_values;
 
   function preProcess() {
