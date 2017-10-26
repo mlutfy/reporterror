@@ -70,9 +70,6 @@ function reporterror_civicrm_uninstall() {
  * Implementation of hook_civicrm_enable
  */
 function reporterror_civicrm_enable() {
-  // rebuild the menu so our path is picked up
-  CRM_Core_Invoke::rebuildMenuAndCaches();
-
   return _reporterror_civix_civicrm_enable();
 }
 
@@ -163,40 +160,20 @@ function reporterror_civicrm_handler($vars, $options_overrides = array()) {
   $redirect_path = NULL;
   $redirect_options = array();
 
-  //
-  // Try to handle the error in a more user-friendly way
-  //
+  $handers = [
+    'FormsNoReferer',
+    'SmartGroupRefresh',
+  ];
 
-  // Contribution forms: error with no HTTP_REFERER (most likely a bot, restored session, or copy-pasted link)
-  $config = CRM_Core_Config::singleton();
-  $urlVar = $config->userFrameworkURLVar;
-  $arg = explode('/', $_GET[$urlVar]);
+  foreach ($handers as $h) {
+    $success = call_user_func_array('CRM_ReportError_Handler_' . $h . '::handler', [$vars, $options_overrides]);
 
-  // Redirect for Contribution pages without a referrer (close / restore browser page)
-  if ($arg[0] == 'civicrm' && $arg[1] == 'contribute' && $arg[2] == 'transact' && ! $_SERVER['HTTP_REFERER'] && $_SERVER['REQUEST_METHOD'] != 'HEAD') {
-    $handle = reporterror_setting_get('noreferer_handle', $options_overrides);
-    $pageid = reporterror_setting_get('noreferer_pageid', $options_overrides);
-    $sendreport = reporterror_setting_get('noreferer_sendreport', $options_overrides, 1);
-
-    if ($handle == 1 || ($handle == 2 && ! $pageid)) {
-      $redirect_path = CRM_Utils_System::baseCMSURL();
-    }
-    elseif ($handle == 2) {
-      $redirect_path = CRM_Utils_System::url('civicrm/contribute/transact', 'reset=1&id=' . $pageid);
+    if ($success) {
+      return TRUE;
     }
   }
-  elseif ($arg[0] == 'civicrm' && $arg[1] == 'event' && ! $_SERVER['HTTP_REFERER'] && $_SERVER['REQUEST_METHOD'] != 'HEAD') {
-    $handle = reporterror_setting_get('noreferer_handle_event', $options_overrides);
-    $pageid = reporterror_setting_get('noreferer_handle_eventid', $options_overrides);
-    $sendreport = reporterror_setting_get('noreferer_sendreport_event', $options_overrides, 1);
 
-    if ($handle == 1 || ($handle == 2 && ! $pageid)) {
-      $redirect_path = CRM_Utils_System::baseCMSURL();
-    }
-    elseif ($handle == 2) {
-      $redirect_path = CRM_Utils_System::url('civicrm/event/register', 'reset=1&id=' . $pageid);
-    }
-  }
+  // TODO: below are legacy handlers that need to be moved to their own class.
 
   // Profiles reserved to authenticated users
   if ($arg[0] == 'civicrm' && $arg[1] == 'profile') {
@@ -220,6 +197,7 @@ function reporterror_civicrm_handler($vars, $options_overrides = array()) {
 
     $bots_sendreport = reporterror_setting_get('bots_sendreport', $options_overrides);
     $bots_404 = reporterror_setting_get('bots_404', $options_overrides);
+    $vars['reporterror_subject'] = ts('bot', array('domain' => 'ca.bidon.reporterror'));
 
     if (! $bots_sendreport) {
       $sendreport = FALSE;
@@ -228,84 +206,15 @@ function reporterror_civicrm_handler($vars, $options_overrides = array()) {
     if ($bots_404) {
       $generate_404 = TRUE;
     }
-
   }
 
   // Send email report
   if ($sendreport) {
-    $domain = CRM_Core_BAO_Domain::getDomain();
-    $site_name = $domain->name;
-
-    $len = REPORTERROR_CIVICRM_SUBJECT_LEN;
-
-    $extra_info = array();
-
-    if ($redirect_path) {
-      $extra_info[] = ts('redirected', array('domain' => 'ca.bidon.reporterror'));
-    }
-
-    if ($is_bot) {
-      $extra_info[] = ts('bot', array('domain' => 'ca.bidon.reporterror'));
-    }
-
-    if (count($extra_info)) {
-      $subject = ts('CiviCRM error [%2] at %1', array(1 => $site_name, 2 => implode(',', $extra_info), 'domain' => 'ca.bidon.reporterror'));
-    }
-    else {
-      $subject = ts('CiviCRM error at %1', array(1 => $site_name, 'domain' => 'ca.bidon.reporterror'));
-    }
-
-    if ($len) {
-      $subject .= ' (' . substr($vars['message'], 0, $len) . ')';
-    }
-
-    $to = reporterror_setting_get('mailto', $options_overrides);
-
-    if (!empty($to)) {
-      $destinations = explode(REPORTERROR_EMAIL_SEPARATOR, $to);
-      $output = reporterror_civicrm_generatereport($site_name, $vars, $redirect_path, $options_overrides);
-
-      foreach ($destinations as $dest) {
-        $dest = trim($dest);
-        reporterror_civicrm_send_mail($dest, $subject, $output);
-      }
-    }
-    else {
-      CRM_Core_Error::debug_log_message('Report Error Extension could not send since no email address was set.');
-    }
+    CRM_ReportError_Utils::sendReport($vars, $options_overrides);
   }
 
   if ($generate_404) {
-    $config = CRM_Core_Config::singleton();
-
-    switch ($config->userFramework) {
-      case 'Drupal':
-      case 'Drupal6':
-        drupal_not_found();
-        drupal_exit();
-        break;
-
-      case 'Drupal8':
-        // TODO: not tested.
-        // use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-        // throw new NotFoundHttpException();
-        break;
-
-      case 'WordPress':
-        // TODO: not tested.
-        global $wp_query;
-        $wp_query->set_404();
-        status_header(404);
-        break;
-
-      case 'Joomla':
-        // TODO: not tested.
-        header("HTTP/1.0 404 Not Found");
-        break;
-
-      default:
-        header("HTTP/1.0 404 Not Found");
-    }
+    CRM_ReportError_Utils::generate_404();
   }
 
   // A redirection avoids displaying the error to the user.
