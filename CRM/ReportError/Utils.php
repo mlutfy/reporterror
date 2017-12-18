@@ -22,7 +22,7 @@ class CRM_ReportError_Utils {
       $subject .= ' (' . substr($vars['message'], 0, $len) . ')';
     }
 
-    $to = reporterror_setting_get('mailto', $options_overrides);
+    $to = reporterror_setting_get('reporterror_mailto', $options_overrides);
 
     if (!empty($to)) {
       $destinations = explode(REPORTERROR_EMAIL_SEPARATOR, $to);

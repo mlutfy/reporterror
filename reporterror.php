@@ -6,6 +6,10 @@ define('REPORTERROR_CIVICRM_SUBJECT_LEN', 100);
 define('REPORTERROR_SETTINGS_GROUP', 'ReportError Extension');
 define('REPORTERROR_EMAIL_SEPARATOR', ',');
 
+require_once(__DIR__ . '/vendor/autoload.php');
+
+use CRM_ReportError_ExtensionUtil as E;
+
 /**
  * Implementation of hook_civicrm_config
  */
@@ -13,7 +17,7 @@ function reporterror_civicrm_config(&$config) {
   _reporterror_civix_civicrm_config($config);
 
   // override the error handler
-  $config =& CRM_Core_Config::singleton( );
+  $config = CRM_Core_Config::singleton();
   $config->fatalErrorHandler = 'reporterror_civicrm_handler';
 }
 
@@ -38,9 +42,9 @@ function reporterror_civicrm_install() {
  */
 function reporterror_civicrm_uninstall() {
   // Send final email
-  $subject = ts('CiviCRM Error Report was uninstalled', array('domain' => 'ca.bidon.reporterror'));
+  $subject = E::ts('CiviCRM Error Report was uninstalled');
   $output = $subject . _reporterror_civicrm_get_session_info();
-  $to = CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, 'mailto');
+  $to = Civi::settings()->get('reporterror_mailto');
 
   if (!empty($to)) {
     $destinations = explode(REPORTERROR_SETTINGS_GROUP, $to);
@@ -50,16 +54,16 @@ function reporterror_civicrm_uninstall() {
     }
   }
   else {
-    CRM_Core_Error::debug_log_message('Report Error Extension could not send since no email address was set.');
+    Civi::log()->warning('Report Error Extension could not send since no email address was set.');
   }
 
   // Delete our settings
   // FIXME: Maybe settings metadata helps? This is redundant.
-  $settings = [ 'show_full_backtrace', 'show_post_data', 'show_session_data', 'noreferer_sendreport', 'noreferer_sendreport_event', 'bots_sendreport', 'bots_404', 'bots_regexp' ];
+  $settings = [ 'reporterror_show_full_backtrace', 'reporterror_show_post_data', 'reporterror_show_session_data', 'reporterror_noreferer_sendreport', 'reporterror_noreferer_sendreport_event', 'reporterror_bots_sendreport', 'reporterror_bots_404', 'reporterror_bots_regexp' ];
 
-  foreach ($settings as $val) {
+  foreach ($settings as $name) {
     CRM_Core_DAO::executeQuery('DELETE FROM civicrm_setting WHERE name = %1', array(
-      1 => array($val, 'String'),
+      1 => array($name, 'String'),
     ));
   }
 
@@ -126,7 +130,7 @@ function reporterror_civicrm_navigationMenu(&$params) {
   }
 
   if (! $settingsMenuId) {
-    CRM_Core_Error::debug_log_message('Report Error Extension could not find the System Settings menu item. Menu item to configure this extension will not be added.');
+    Civi::log()->warning('Report Error Extension could not find the System Settings menu item. Menu item to configure this extension will not be added.');
     return;
   }
 
@@ -177,7 +181,7 @@ function reporterror_civicrm_handler($vars, $options_overrides = array()) {
 
   // Profiles reserved to authenticated users
   if ($arg[0] == 'civicrm' && $arg[1] == 'profile') {
-    $handle = reporterror_setting_get('noreferer_handle_profiles', $options_overrides);
+    $handle = reporterror_setting_get('reporterror_noreferer_handle_profiles', $options_overrides);
 
     $redirect_path = CRM_Utils_System::baseCMSURL();
     $sendreport = FALSE;
@@ -190,14 +194,14 @@ function reporterror_civicrm_handler($vars, $options_overrides = array()) {
 
   // Identify and possibly ignore bots
   $is_bot = FALSE;
-  $bots_regexp = reporterror_setting_get('bots_regexp', $options_overrides);
+  $bots_regexp = reporterror_setting_get('reporterror_bots_regexp', $options_overrides);
 
   if ($bots_regexp && preg_match('/' . $bots_regexp . '/', $_SERVER['HTTP_USER_AGENT'])) {
     $is_bot = TRUE;
 
-    $bots_sendreport = reporterror_setting_get('bots_sendreport', $options_overrides);
-    $bots_404 = reporterror_setting_get('bots_404', $options_overrides);
-    $vars['reporterror_subject'] = ts('bot', array('domain' => 'ca.bidon.reporterror'));
+    $bots_sendreport = reporterror_setting_get('reporterror_bots_sendreport', $options_overrides);
+    $bots_404 = reporterror_setting_get('reporterror_bots_404', $options_overrides);
+    $vars['reporterror_subject'] = E::ts('reporterror_bot');
 
     if (! $bots_sendreport) {
       $sendreport = FALSE;
@@ -233,9 +237,9 @@ function reporterror_civicrm_handler($vars, $options_overrides = array()) {
  * Returns a plain text output for the e-mail report.
  */
 function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path, $options_overrides = array()) {
-  $show_full_backtrace = reporterror_setting_get('show_full_backtrace', $options_overrides);
-  $show_post_data = reporterror_setting_get('show_post_data', $options_overrides);
-  $show_session_data = reporterror_setting_get('show_session_data', $options_overrides);
+  $show_full_backtrace = reporterror_setting_get('reporterror_show_full_backtrace', $options_overrides);
+  $show_post_data = reporterror_setting_get('reporterror_show_post_data', $options_overrides);
+  $show_session_data = reporterror_setting_get('reporterror_show_session_data', $options_overrides);
 
   $output = ts('There was a CiviCRM error at %1.', array(1 => $site_name)) . "\n";
   $output .= ts('Date: %1', array(1 => date('c'))) . "\n\n";
@@ -434,7 +438,12 @@ function reporterror_setting_get($name, $options_overrides, $default = NULL) {
   if (isset($options_overrides[$name])) {
     return $options_overrides[$name];
   }
-
-  return CRM_Core_BAO_Setting::getItem(REPORTERROR_SETTINGS_GROUP, $name, NULL, $default);
+  return Civi::settings()->get($name);
 }
 
+/**
+ * Implements hook_civicrm_alterSettingsFolders().
+ */
+function reporterror_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
+  _reporterror_civix_civicrm_alterSettingsFolders($metaDataFolders);
+}
