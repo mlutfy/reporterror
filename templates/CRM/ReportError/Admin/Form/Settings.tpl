@@ -27,7 +27,7 @@
     </tr>
   </table>
 
-  <div class="crm-accordion-wrapper crm-member_search_form-accordion collapsed">
+  <div class="crm-accordion-wrapper crm-reporterror_admin_form-accordion collapsed">
     <div class="crm-accordion-header crm-master-accordion-header">
       {ts}Contribution pages with no referrer{/ts}
     </div>
@@ -51,7 +51,7 @@
     </div>
   </div>
 
-  <div class="crm-accordion-wrapper crm-member_search_form-accordion collapsed">
+  <div class="crm-accordion-wrapper crm-reporterror_admin_form-accordion collapsed">
     <div class="crm-accordion-header crm-master-accordion-header">
       {ts}Event registration pages with no referrer{/ts}
     </div>
@@ -75,7 +75,7 @@
     </div>
   </div>
 
-  <div class="crm-accordion-wrapper crm-member_search_form-accordion collapsed">
+  <div class="crm-accordion-wrapper crm-reporterror_admin_form-accordion collapsed">
     <div class="crm-accordion-header crm-master-accordion-header">
       {ts}Profile errors{/ts}
     </div>
@@ -95,7 +95,7 @@
     </div>
   </div>
 
-  <div class="crm-accordion-wrapper crm-member_search_form-accordion collapsed">
+  <div class="crm-accordion-wrapper crm-reporterror_admin_form-accordion collapsed">
     <div class="crm-accordion-header crm-master-accordion-header">
       {ts}Bots and crawlers{/ts}
     </div>
