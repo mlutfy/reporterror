@@ -128,6 +128,27 @@
     </div>
   </div>
 
+  <div class="crm-accordion-wrapper crm-reporterror_admin_form-accordion collapsed">
+    <div class="crm-accordion-header crm-master-accordion-header">
+      {ts}Smart Groups{/ts}
+    </div>
+    <div class="crm-accordion-body">
+
+      <p>{ts}In some more complex configurations, Smart Groups can fail to refresh if their search criterias are no longer valid. This is a rather rare use-case, usually caused by custom searches. If one smarty group fails to refresh, the Scheduled Job that periodically to refresh the smart group contacts will then fail to run, which can cause incorrect contact group counts in other groups.{/ts}</p>
+
+      <table class="form-layout-compressed" style="width:100%;">
+        <tr class="crm-reporterror-form-block">
+          <td class="label">{$form.reporterror_smartgroups_autodisable.label}</td>
+          <td>
+            {$form.reporterror_smartgroups_autodisable.html}
+            <p class="description">{ts}When a group is disabled, an email notification will be sent (if one was set in the field at the top of this screen) and a note will be added in the group description.{/ts}</p>
+          </td>
+        </tr>
+      </table>
+
+    </div>
+  </div>
+
   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
 {/crmScope}

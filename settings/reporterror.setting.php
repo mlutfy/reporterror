@@ -184,4 +184,16 @@ return [
     'description' => 'Bot user-agents to ignore',
     'help_text' => '',
   ],
+  'reporterror_smartgroups_autodisable' => [
+    'group_name' => 'domain',
+    'group' => 'reporterror',
+    'name' => 'reporterror_smartgroups_autodisable',
+    'type' => 'Boolean',
+    'default' => 0,
+    'add' => '1.0',
+    'is_domain' => 1,
+    'is_contact' => 0,
+    'description' => 'Automatically disable invalid smartgroups',
+    'help_text' => '',
+  ],
 ];

@@ -13,6 +13,10 @@ class CRM_ReportError_Handler_SmartGroupRefresh {
       return FALSE;
     }
 
+    if (!Civi::settings()->get('reporterror_smartgroups_autodisable')) {
+      return FALSE;
+    }
+
     $extra_params = $vars['exception']->getExtraParams();
 
     if (!isset($extra_params['sql'])) {

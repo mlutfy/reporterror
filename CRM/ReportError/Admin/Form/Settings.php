@@ -21,6 +21,7 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
     'reporterror_bots_sendreport' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
     'reporterror_bots_404' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
     'reporterror_bots_regexp' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+    'reporterror_smartgroups_autodisable' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
   ];
 
   /**
@@ -129,9 +130,10 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
     $this->addYesNo('reporterror_bots_sendreport', E::ts('Send error reports for errors caused by bots?'));
     $this->addYesNo('reporterror_bots_404', E::ts('Respond with a 404 page not found error?'));
 
-    $this->add('text', 'reporterror_bots_regexp',
-      E::ts('Bots to ignore'),
-      TRUE);
+    $this->add('text', 'reporterror_bots_regexp', E::ts('Bots to ignore'), TRUE);
+
+    // Smartgroups
+    $this->addYesNo('reporterror_smartgroups_autodisable', E::ts('Automatically disable broken smartgroups?'));
 
     $this->addButtons(array(
       array(
