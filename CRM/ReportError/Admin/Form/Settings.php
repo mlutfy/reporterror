@@ -143,7 +143,7 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
     $this->add('text', 'reporterror_gelf_hostname', E::ts('Logging server hostname'));
     $this->add('text', 'reporterror_gelf_port', E::ts('Logging server port'));
 
-    $this->addButtons(array(
+    $this->addButtons([
       array(
         'type' => 'submit',
         'name' => ts('Save'),
