@@ -91,11 +91,11 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
       $event_pages[$val['id']] = CRM_Utils_Array::value('title', $val);
     }
 
-    $radio_choices = array(
-      '0' => ts('Do nothing (show the CiviCRM error)', array('domain' => 'ca.bidon.reporterror')),
-      '1' => ts('Redirect to front page of CMS', array('domain' => 'ca.bidon.reporterror')),
-      '2' => ts('Redirect to a specific event registration page', array('domain' => 'ca.bidon.reporterror'))
-    );
+    $radio_choices = [
+      '0' => E::ts('Do nothing (show the CiviCRM error)'),
+      '1' => E::ts('Redirect to front page of CMS'),
+      '2' => E::ts('Redirect to a specific event registration page'),
+    ];
 
     $this->addRadio('reporterror_noreferer_handle_event',
       E::ts('Enable transparent redirection?'),

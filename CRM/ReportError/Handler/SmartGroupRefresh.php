@@ -1,5 +1,7 @@
 <?php
 
+use CRM_ReportError_ExtensionUtil as E;
+
 class CRM_ReportError_Handler_SmartGroupRefresh {
 
   /**
@@ -56,7 +58,7 @@ class CRM_ReportError_Handler_SmartGroupRefresh {
       ]);
 
       if (CRM_Utils_Array::value('update_smart_groups', $_REQUEST) == 1) {
-        CRM_Core_Session::setStatus(ts('ERROR: Group ID %1 could not be loaded and has been disabled. This may be the result of a deleted custom field or a bug in a custom search.', [1 => $broken_group_id]), '', 'error');
+        CRM_Core_Session::setStatus(E::ts('ERROR: Group ID %1 could not be loaded and has been disabled. This may be the result of a deleted custom field or a bug in a custom search.', [1 => $broken_group_id]), '', 'error');
         CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/group', 'reset=1'));
         return TRUE;
       }
@@ -65,7 +67,7 @@ class CRM_ReportError_Handler_SmartGroupRefresh {
         $output['data'][] = [
           'id' => 99999,
           'count' => 1,
-          'title' => ts('ERROR: Group ID %1 could not be loaded and has been disabled. This may be the result of a deleted custom field or a bug in a custom search.', [1 => $broken_group_id]),
+          'title' => E::ts('ERROR: Group ID %1 could not be loaded and has been disabled. This may be the result of a deleted custom field or a bug in a custom search.', [1 => $broken_group_id]),
           'description' => '',
           'group_type' => '',
           'visibility' => '',
