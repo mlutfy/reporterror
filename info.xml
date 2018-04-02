@@ -18,6 +18,7 @@
   <version>2.13</version>
   <develStage>stable</develStage>
   <compatibility>
+    <ver>5.0</ver>
     <ver>4.7</ver>
   </compatibility>
   <comments></comments>
