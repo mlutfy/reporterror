@@ -176,10 +176,11 @@
           </td>
         </tr>
       </table>
-
-      <p>{ts}Looking for a hosting provider that supports this for all their clients? <a href="https://www.symbiotic.coop/en">Coop SymbioTIC</a> provides turn-key CiviCRM hosting or can manage an on-premise installation for you.{/ts}</p>
     </div>
   </div>
+
+  {capture assign='symbioticURL'}https://www.symbiotic.coop/en/turn-key-civicrm-hosting?utm_source=reporterror&utm_medium=extension&utm_content=v1{/capture}
+  <p>{ts 1=$symbioticURL}Need a hand? <a href="%1" target="_blank">Coop SymbioTIC</a> provides turn-key CiviCRM hosting. Our hosting provides peace of mind, with regular upgrades and 24/7 monitoring. As the authors of this extension, we're pretty good at debugging too! <a href="%1" target="_blank">Read more</a>{/ts}</p>
 
   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
