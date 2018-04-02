@@ -348,9 +348,14 @@ function _reporterror_civicrm_parse_array($array) {
   // We do this hackishly this way, because:
   // - doing a search/replace in the $array can cause changes in the $_SESSION, for example, because of references.
   // - re-writing print_r() seemed a bit ambitious, and likely to introduce bugs.
-  $output = preg_replace('/\[credit_card_number\] => (\d{6})\d+/', '[credit_card_number] => \1[removed]', $output);
+  $output = preg_replace('/\[credit_card_number\] => (\d{4})\d+/', '[credit_card_number] => \1[removed]', $output);
   $output = preg_replace('/\[cvv2\] => \d+/', '[cvv2] => [removed]', $output);
-  $output = preg_replace('/\[password\] => [^\s]+/', '[password] => [removed]', $output);
+  $output = preg_replace('/\[password\] => .*$/', '[password] => [removed]', $output);
+
+  // This is for the POST data
+  $output = preg_replace('/credit_card_number:\s+(\d{4})\d+/', 'credit_card_number: \1[removed]', $output);
+  $output = preg_replace('/cvv2:\s+\d+/', 'cvv2: [removed]', $output);
+  $output = preg_replace('/password: .*$/', 'password: [removed]', $output);
 
   return $output . "\n";
 }
