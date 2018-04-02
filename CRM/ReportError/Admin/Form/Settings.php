@@ -166,12 +166,13 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
     // store the submitted values in an array
     $values = $this->exportValues();
 
-    foreach ($this->_settings as $setting) {
+    foreach ($this->_settings as $setting => $group) {
       $value = $values[$setting];
       Civi::settings()->set($setting, $value);
     }
 
-    // we will return to this form by default
+    // Return back to this form by default
     CRM_Core_Session::setStatus(E::ts('Settings saved.'), '', 'success');
+    CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/admin/setting/reporterror', 'reset=1'));
   }
 }
