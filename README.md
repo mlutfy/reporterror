@@ -37,16 +37,46 @@ Installation
 Requirements
 ------------
 
-- CiviCRM >= 4.2
-- Tested with CiviCRM 4.4 to 4.6.
+- CiviCRM >= 5.0
 
 Contributors
 ------------
 
 * CiviCRM extension/integration written & maintained by Mathieu Lutfy (Coop SymbioTIC),
   co-authored by Lola S (Freeform), Nicolas Ganivet (CiviDesk) and Young-Jin Kim (Emphanos).
-* Based on the civicrm_error Drupal module initially written by Dave Hansen-Lange (dalin):  
+* Based on the civicrm_error Drupal module by Dave Hansen-Lange (dalin):  
   https://drupal.org/project/civicrm_error
+
+Logging PEAR/DB errors
+-------------------
+
+Some PEAR and database errors are handled by a separate handler of CiviCRM.
+For this extension to handle those errors, apply this patch:
+
+```
+diff --git a/sites/all/modules/civicrm/CRM/Core/Error.php b/sites/all/modules/civicrm/CRM/Core/Error.php
+--- a/civicrm/CRM/Core/Error.php
++++ b/civicrm/CRM/Core/Error.php
+@@ -221,6 +221,19 @@ class CRM_Core_Error extends PEAR_ErrorStack {
+       }
+     }
+
++    if ($config->fatalErrorHandler && function_exists($config->fatalErrorHandler)) {
++      $name = $config->fatalErrorHandler;
++      $vars = [
++        'pearError' => $pearError,
++      ];
++      $ret = $name($vars);
++      if ($ret) {
++        // the call has been successfully handled
++        // so we just exit
++        self::abend(CRM_Core_Error::FATAL_ERROR);
++      }
++    }
++
+```
+
+(this patches the `handle($pearError)` function)
 
 Support
 -------
@@ -54,29 +84,22 @@ Support
 Please post bug reports in the issue tracker of this project on github:  
 https://github.com/mlutfy/ca.bidon.reporterror/issues
 
-For general support questions, please use the CiviCRM Extensions forum:  
-http://forum.civicrm.org/index.php/board,57.0.html
-
 This is a community contributed extension written thanks to the financial
 support of organisations using it, as well as the very helpful and collaborative
 CiviCRM community.
 
-If you appreciate this module, please consider donating 10$ to the CiviCRM project:  
-http://civicrm.org/participate/support-civicrm
-
-While I do my best to provide volunteer support for this extension, please
-consider financially contributing to support and further develop this extension.
+Please consider financially contributing to support and further develop this extension.
 
 Commercial support is available through Coop SymbioTIC:  
-https://www.symbiotic.coop
+https://www.symbiotic.coop/en
 
 Copyright
 ---------
 
 License: AGPL 3
 
-Copyright (C) 2012-2015 CiviCRM LLC (info@civicrm.org)  
-http://www.civicrm.org
+Copyright (C) 2012-2018 CiviCRM LLC (info@civicrm.org)  
+https://civicrm.org
 
-Copyright (C) 2012-2015 Mathieu Lutfy (mathieu@symbiotic.coop)  
-https://www.symbiotic.coop
+Copyright (C) 2012-2018 Mathieu Lutfy (mathieu@symbiotic.coop)  
+https://www.symbiotic.coop/en

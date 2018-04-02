@@ -1,15 +1,15 @@
 <?php
 
+use CRM_ReportError_ExtensionUtil as E;
+
 class CRM_ReportError_Handler_SmartGroupRefresh {
 
   /**
    * Try to handle a failing smartgroup refresh.
    * This will automatically disable a broken smartgroup.
-   *
-   * FIXME: add a configuration option, this should be opt-in.
    */
-  static public function handling($vars, $options_overrides) {
-    if (!isset($vars['exception'])) {
+  static public function handler($vars, $options_overrides) {
+    if (!isset($vars['exception']) && !isset($vars['pearError'])) {
       return FALSE;
     }
 
@@ -17,66 +17,77 @@ class CRM_ReportError_Handler_SmartGroupRefresh {
       return FALSE;
     }
 
-    $extra_params = $vars['exception']->getExtraParams();
+    $sql = NULL;
+    $error_message = NULL;
 
-    if (!isset($extra_params['sql'])) {
-      return FALSE;
+    if (empty($sql) && isset($vars['exception'])) {
+      $extra_params = $vars['exception']->getExtraParams();
+
+      if (isset($extra_params['sql'])) {
+        $sql = $extra_params['sql'];
+      }
+
+      $error_message = $vars['exception']->getMessage();
     }
 
-    if (preg_match('/^CREATE TEMPORARY TABLE civicrm_temp_group_contact_cache\d+ \(SELECT (\d+) as group_id/', $extra_params['sql'], $matches)) {
+    if (empty($sql) && isset($vars['pearError'])) {
+      if (!empty($vars['pearError']->userinfo)) {
+        $sql = $vars['pearError']->userinfo;
+      }
+
+      $error_message = $vars['pearError']->message;
+    }
+
+    if (preg_match('/^CREATE TEMPORARY TABLE civicrm_temp_group_contact_cache\d+ \(SELECT (\d+) as group_id/', $sql, $matches)) {
       $broken_group_id = $matches[1];
 
-      $backtrace = debug_backtrace();
+      $output = [
+        'data' => [],
+      ];
 
-      foreach ($backtrace as $hop) {
-        if ($hop['function'] == 'reporterror_civicrm_handler') {
-          $t = $hop['args'][0]['exception']->getTrace();
+      $result = civicrm_api3('Group', 'getsingle', [
+        'group_id' => $broken_group_id,
+      ]);
 
-          foreach ($t as $tt) {
-            if ($tt['function'] == 'getGroupList') {
-              $output = [
-                'data' => [],
-              ];
+      $description = ($result['description'] ? $result['description'] . ' -- ' : '') . 'Disabled automatically by reporterror: ' . $error_message;
 
-              $result = civicrm_api3('Group', 'getsingle', [
-                'group_id' => $broken_group_id,
-              ]);
+      civicrm_api3('Group', 'create', [
+        'group_id' => $broken_group_id,
+        'description' => $description,
+        'is_active' => 0,
+      ]);
 
-              $description = $result['description'] . ' -- Disabled automatically: ' . $vars['exception']->getMessage();
-
-              civicrm_api3('Group', 'create', [
-                'group_id' => $broken_group_id,
-                'description' => $description,
-                'is_active' => 0,
-              ]);
-
-              $output['data'][] = [
-                'id' => 99999,
-                'count' => 1,
-                'title' => ts('ERROR: Group ID %1 could not be loaded and has been disabled. This may be the result of a deleted custom field or a bug in a custom search.', [1 => $broken_group_id]),
-                'description' => '',
-                'group_type' => '',
-                'visibility' => '',
-                'links' => '',
-                'created_by' => '',
-                'DT_RowId' => 'row_99999',
-                'DT_RowClass' => 'crm-group-parent',
-                'DT_RowAttr' => [
-                  'data-id' => 99999,
-                  'data-entity' => 'group',
-                ],
-              ];
-
-              echo json_encode($output);
-
-              $vars['reporterror_subject'] = "SmartGroupRefresh";
-              CRM_ReportError_Utils::sendReport($vars, $options_overrides);
-
-              return TRUE;
-            }
-          }
-        }
+      if (CRM_Utils_Array::value('update_smart_groups', $_REQUEST) == 1) {
+        CRM_Core_Session::setStatus(E::ts('ERROR: Group ID %1 could not be loaded and has been disabled. This may be the result of a deleted custom field or a bug in a custom search.', [1 => $broken_group_id]), '', 'error');
+        CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/group', 'reset=1'));
+        return TRUE;
       }
+      else {
+        // Assumes this is while the main database was being loaded on /civicrm/group?reset=1
+        $output['data'][] = [
+          'id' => 99999,
+          'count' => 1,
+          'title' => E::ts('ERROR: Group ID %1 could not be loaded and has been disabled. This may be the result of a deleted custom field or a bug in a custom search.', [1 => $broken_group_id]),
+          'description' => '',
+          'group_type' => '',
+          'visibility' => '',
+          'links' => '',
+          'created_by' => '',
+          'DT_RowId' => 'row_99999',
+          'DT_RowClass' => 'crm-group-parent',
+          'DT_RowAttr' => [
+            'data-id' => 99999,
+            'data-entity' => 'group',
+          ],
+        ];
+
+        echo json_encode($output);
+      }
+
+      $vars['reporterror_subject'] = "SmartGroupRefresh";
+      CRM_ReportError_Utils::sendReport($vars, $options_overrides);
+
+      return TRUE;
     }
 
     return FALSE;

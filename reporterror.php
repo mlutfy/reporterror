@@ -241,11 +241,11 @@ function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path, $
   $show_post_data = reporterror_setting_get('reporterror_show_post_data', $options_overrides);
   $show_session_data = reporterror_setting_get('reporterror_show_session_data', $options_overrides);
 
-  $output = ts('There was a CiviCRM error at %1.', array(1 => $site_name)) . "\n";
-  $output .= ts('Date: %1', array(1 => date('c'))) . "\n\n";
+  $output = E::ts('There was a CiviCRM error at %1.', array(1 => $site_name)) . "\n";
+  $output .= E::ts('Date: %1', array(1 => date('c'))) . "\n\n";
 
   if ($redirect_path) {
-    $output .= ts("Error handling rules redirected the user to:") . "\n";
+    $output .= E::ts("Error handling rules redirected the user to:") . "\n";
     $output .= $redirect_path . "\n\n";
   }
 
