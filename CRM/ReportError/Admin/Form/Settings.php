@@ -44,24 +44,24 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
 
     // Special handling of Contribution page errors.
     // Get a list of contribution pages
-    $results = civicrm_api3('ContributionPage', 'get', array(
+    $results = civicrm_api3('ContributionPage', 'get', [
       'is_active' => 1,
       'option.limit' => 0,
-    ));
+    ]);
 
-    $contribution_pages = array(
+    $contribution_pages = [
       0 => ts('- Select -'),
-    );
+    ];
 
     foreach ($results['values'] as $val) {
       $contribution_pages[$val['id']] = CRM_Utils_Array::value('title', $val);
     }
 
-    $radio_choices = array(
+    $radio_choices = [
       '0' => E::ts('Do nothing (show the CiviCRM error)'),
       '1' => E::ts('Redirect to front page of CMS'),
       '2' => E::ts('Redirect to a specific contribution page'),
-    );
+    ];
 
     $this->addRadio('reporterror_noreferer_handle',
       E::ts('Enable transparent redirection?'),
@@ -78,14 +78,14 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
       TRUE);
 
     // Special handling of Event page errors.
-    $results = civicrm_api3('Event', 'get', array(
+    $results = civicrm_api3('Event', 'get', [
       'is_active' => 1,
       'option.limit' => 0,
-    ));
+    ]);
 
-    $event_pages = array(
+    $event_pages = [
       0 => ts('- Select -'),
-    );
+    ];
 
     foreach ($results['values'] as $val) {
       $event_pages[$val['id']] = CRM_Utils_Array::value('title', $val);
@@ -112,10 +112,10 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
       TRUE);
 
     // Special handling of profiles
-    $radio_choices = array(
+    $radio_choices = [
       '0' => E::ts('Do nothing (show the CiviCRM error)'),
       '1' => E::ts('Redirect to front page of CMS'),
-    );
+    ];
 
     $this->addRadio('reporterror_handle_profile',
       E::ts('Enable transparent redirection?'),
@@ -135,7 +135,7 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
     // Smartgroups
     $this->addYesNo('reporterror_smartgroups_autodisable', E::ts('Automatically disable broken smartgroups?'));
 
-    $this->addButtons(array(
+    $this->addButtons([
       array(
         'type' => 'submit',
         'name' => ts('Save'),
@@ -145,7 +145,7 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
         'type' => 'cancel',
         'name' => ts('Cancel'),
       ),
-    ));
+    ]);
   }
 
   /**
