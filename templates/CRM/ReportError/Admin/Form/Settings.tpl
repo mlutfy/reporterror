@@ -133,7 +133,6 @@
       {ts}Smart Groups{/ts}
     </div>
     <div class="crm-accordion-body">
-
       <p>{ts}In some more complex configurations, Smart Groups can fail to refresh if their search criterias are no longer valid. This is a rather rare use-case, usually caused by custom searches. If one smarty group fails to refresh, the Scheduled Job that periodically to refresh the smart group contacts will then fail to run, which can cause incorrect contact group counts in other groups.{/ts}</p>
 
       <table class="form-layout-compressed" style="width:100%;">
@@ -145,7 +144,40 @@
           </td>
         </tr>
       </table>
+    </div>
+  </div>
 
+  <div class="crm-accordion-wrapper crm-reporterror_admin_form-accordion collapsed">
+    <div class="crm-accordion-header crm-master-accordion-header">
+      {ts}Remote Logging{/ts}
+    </div>
+    <div class="crm-accordion-body">
+      <p>{ts}By default, Report Error sends an email when an error occurs. In some circumstances, this can generate a lot of e-mails. You may want to collect error reports in a more structured way to simplify analysis. This extension supports (for now) the Gelf protocol, which is supported by Greylog2 or Logstash.{/ts}</p>
+
+      <table class="form-layout-compressed" style="width:100%;">
+        <tr class="crm-reporterror-form-block">
+          <td class="label">{$form.reporterror_gelf_enable.label}</td>
+          <td>
+            {$form.reporterror_gelf_enable.html}
+          </td>
+        </tr>
+        <tr class="crm-reporterror-form-block">
+          <td class="label">{$form.reporterror_gelf_hostname.label}</td>
+          <td>
+            {$form.reporterror_gelf_hostname.html}
+            <p class="description">{ts}Ex: log.example.org{/ts}</p>
+          </td>
+        </tr>
+        <tr class="crm-reporterror-form-block">
+          <td class="label">{$form.reporterror_gelf_port.label}</td>
+          <td>
+            {$form.reporterror_gelf_port.html}
+            <p class="description">{ts}Ex: 12201{/ts}</p>
+          </td>
+        </tr>
+      </table>
+
+      <p>{ts}Looking for a hosting provider that supports this for all their clients? <a href="https://www.symbiotic.coop/en">Coop SymbioTIC</a> provides turn-key CiviCRM hosting or can manage an on-premise installation for you.{/ts}</p>
     </div>
   </div>
 

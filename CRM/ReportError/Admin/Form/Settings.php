@@ -22,6 +22,9 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
     'reporterror_bots_404' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
     'reporterror_bots_regexp' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
     'reporterror_smartgroups_autodisable' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+    'reporterror_gelf_enable' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+    'reporterror_gelf_hostname' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+    'reporterror_gelf_port' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
   ];
 
   /**
@@ -135,7 +138,12 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
     // Smartgroups
     $this->addYesNo('reporterror_smartgroups_autodisable', E::ts('Automatically disable broken smartgroups?'));
 
-    $this->addButtons([
+    // Remote Logging
+    $this->addYesNo('reporterror_gelf_enable', E::ts('Enable remote logging?'));
+    $this->add('text', 'reporterror_gelf_hostname', E::ts('Logging server hostname'));
+    $this->add('text', 'reporterror_gelf_port', E::ts('Logging server port'));
+
+    $this->addButtons(array(
       array(
         'type' => 'submit',
         'name' => ts('Save'),
