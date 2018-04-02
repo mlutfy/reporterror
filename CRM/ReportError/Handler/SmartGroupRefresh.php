@@ -20,7 +20,7 @@ class CRM_ReportError_Handler_SmartGroupRefresh {
     $sql = NULL;
     $error_message = NULL;
 
-    if (empty($sql) && isset($vars['exception'])) {
+    if (empty($sql) && isset($vars['exception']) && method_exists($vars['exception'], 'getExtraParams')) {
       $extra_params = $vars['exception']->getExtraParams();
 
       if (isset($extra_params['sql'])) {
