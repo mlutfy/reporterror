@@ -121,7 +121,7 @@
           <td class="label">{$form.reporterror_bots_regexp.label}</td>
           <td>
             {$form.reporterror_bots_regexp.html}
-            <p class="description">{ts 1='(Googlebot|bingbot|python|Baiduspider|Yandex)'}If in doubt, leave this as is. The default is: !1{/ts}</p>
+            <p class="description">{ts 1='(Googlebot|bingbot|python|Baiduspider|Yandex)'}If in doubt, leave this as is. The default is: %1{/ts}</p>
           </td>
         </tr>
       </table>
