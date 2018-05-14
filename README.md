@@ -34,6 +34,14 @@ Installation
 * A new menu item will be added in Administer > System Settings > Report Errors,
   which you can use to access the extensions settings form.
 
+If you are installing from the git repository, you must run 'composer install'.
+
+Otherwise, please use the packages from the official releases:  
+https://github.com/mlutfy/ca.bidon.reporterror/releases
+
+or from the releases listed on:  
+https://civicrm.org/extensions/civicrm-error-handler
+
 Requirements
 ------------
 
