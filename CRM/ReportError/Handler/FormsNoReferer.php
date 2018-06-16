@@ -1,5 +1,7 @@
 <?php
 
+use CRM_ReportError_ExtensionUtil as E;
+
 class CRM_ReportError_Handler_FormsNoReferer {
 
   /**
@@ -12,8 +14,6 @@ class CRM_ReportError_Handler_FormsNoReferer {
    * which fatals because there is no 'id' present.
    */
   static public function handler($vars, $options_overrides) {
-    $redirect_path = NULL;
-    $redirect_options = array();
     $sendreport = TRUE;
 
     $config = CRM_Core_Config::singleton();
@@ -27,10 +27,10 @@ class CRM_ReportError_Handler_FormsNoReferer {
       $sendreport = reporterror_setting_get('reporterror_noreferer_sendreport', $options_overrides, 1);
 
       if ($handle == 1 || ($handle == 2 && ! $pageid)) {
-        $redirect_path = CRM_Utils_System::baseCMSURL();
+        $vars['redirect_path'] = CRM_Utils_System::baseCMSURL();
       }
       elseif ($handle == 2) {
-        $redirect_path = CRM_Utils_System::url('civicrm/contribute/transact', 'reset=1&id=' . $pageid);
+        $vars['redirect_path'] = CRM_Utils_System::url('civicrm/contribute/transact', 'reset=1&id=' . $pageid);
       }
     }
     elseif ($arg[0] == 'civicrm' && $arg[1] == 'event' && ! $_SERVER['HTTP_REFERER'] && $_SERVER['REQUEST_METHOD'] != 'HEAD') {
@@ -39,26 +39,26 @@ class CRM_ReportError_Handler_FormsNoReferer {
       $sendreport = reporterror_setting_get('reporterror_noreferer_sendreport_event', $options_overrides, 1);
 
       if ($handle == 1 || ($handle == 2 && ! $pageid)) {
-        $redirect_path = CRM_Utils_System::baseCMSURL();
+        $vars['redirect_path'] = CRM_Utils_System::baseCMSURL();
       }
       elseif ($handle == 2) {
-        $redirect_path = CRM_Utils_System::url('civicrm/event/register', 'reset=1&id=' . $pageid);
+        $vars['redirect_path'] = CRM_Utils_System::url('civicrm/event/register', 'reset=1&id=' . $pageid);
       }
     }
 
     if ($sendreport) {
-      if ($redirect_path) {
-        $vars['reporterror_subject'] = ts('redirected', array('domain' => 'ca.bidon.reporterror'));
+      if (!empty($vars['redirect_path'])) {
+        $vars['reporterror_subject'] = E::ts('redirected');
       }
 
       CRM_ReportError_Utils::sendReport($vars, $options_overrides);
     }
 
     // A redirection avoids displaying the error to the user.
-    if ($redirect_path) {
+    if (!empty($vars['redirect_path'])) {
       // 307 = temporary redirect. Assuming it reduces the chances that the browser
       // keeps the redirection in cache.
-      CRM_Utils_System::redirect($redirect_path);
+      CRM_Utils_System::redirect($vars['redirect_path']);
       return TRUE;
     }
 

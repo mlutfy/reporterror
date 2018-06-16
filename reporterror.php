@@ -158,15 +158,11 @@ function reporterror_civicrm_navigationMenu(&$params) {
  * @param $vars Array with the 'message' and 'code' of the error.
  */
 function reporterror_civicrm_handler($vars, $options_overrides = array()) {
-  $sendreport = TRUE;
-  $generate_404 = FALSE;
-
-  $redirect_path = NULL;
-  $redirect_options = array();
-
   $handers = [
+    'IgnoreBots',
     'FormsNoReferer',
     'SmartGroupRefresh',
+    'Profiles',
   ];
 
   foreach ($handers as $h) {
@@ -177,64 +173,16 @@ function reporterror_civicrm_handler($vars, $options_overrides = array()) {
     }
   }
 
-  // TODO: below are legacy handlers that need to be moved to their own class.
-
-  // Profiles reserved to authenticated users
-  if ($arg[0] == 'civicrm' && $arg[1] == 'profile') {
-    $handle = reporterror_setting_get('reporterror_noreferer_handle_profiles', $options_overrides);
-
-    $redirect_path = CRM_Utils_System::baseCMSURL();
-    $sendreport = FALSE;
-
-    $output = reporterror_civicrm_generatereport($site_name, $vars, $redirect_path, $options_overrides);
-    $log = "Report Error Extension: redirected to home page:\n" . $output;
-
-    CRM_Core_Error::debug_log_message($log);
-  }
-
-  // Identify and possibly ignore bots
-  $is_bot = FALSE;
-  $bots_regexp = reporterror_setting_get('reporterror_bots_regexp', $options_overrides);
-
-  if ($bots_regexp && preg_match('/' . $bots_regexp . '/', $_SERVER['HTTP_USER_AGENT'])) {
-    $is_bot = TRUE;
-
-    $bots_sendreport = reporterror_setting_get('reporterror_bots_sendreport', $options_overrides);
-    $bots_404 = reporterror_setting_get('reporterror_bots_404', $options_overrides);
-    $vars['reporterror_subject'] = E::ts('reporterror_bot');
-
-    if (! $bots_sendreport) {
-      $sendreport = FALSE;
-    }
-
-    if ($bots_404) {
-      $generate_404 = TRUE;
-    }
-  }
-
-  // Send email report
-  if ($sendreport) {
-    CRM_ReportError_Utils::sendReport($vars, $options_overrides);
-  }
-
-  if ($generate_404) {
-    CRM_ReportError_Utils::generate_404();
-  }
-
-  // A redirection avoids displaying the error to the user.
-  if ($redirect_path) {
-    // 307 = temporary redirect. Assuming it reduces the chances that the browser
-    // keeps the redirection in cache.
-    CRM_Utils_System::redirect($redirect_path);
-    return TRUE;
-  }
-
   // We let CiviCRM display the regular fatal error
   return FALSE;
 }
 
 /**
  * Returns a plain text output for the e-mail report.
+ *
+ * FIXME: the redirect_path should be included in 'vars'
+ * This should be rewritten under CRM_ReportError_Utils,
+ * with backwards-compat wrapper.
  */
 function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path, $options_overrides = array()) {
   $show_full_backtrace = reporterror_setting_get('reporterror_show_full_backtrace', $options_overrides);
@@ -244,9 +192,14 @@ function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path, $
   $output = E::ts('There was a CiviCRM error at %1.', array(1 => $site_name)) . "\n";
   $output .= E::ts('Date: %1', array(1 => date('c'))) . "\n\n";
 
-  if ($redirect_path) {
+  // Backwards compatibility
+  if ($redirect_path && empty($vars['redirect_path'])) {
+    $vars['redirect_path'] = $redirect_path;
+  }
+
+  if (!empty($vars['redirect_path'])) {
     $output .= E::ts("Error handling rules redirected the user to:") . "\n";
-    $output .= $redirect_path . "\n\n";
+    $output .= $vars['redirect_path'] . "\n\n";
   }
 
   // Error details

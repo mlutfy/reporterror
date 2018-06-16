@@ -28,7 +28,7 @@ class CRM_ReportError_Utils {
 
     if (!empty($to)) {
       $destinations = explode(REPORTERROR_EMAIL_SEPARATOR, $to);
-      $output = reporterror_civicrm_generatereport($site_name, $vars, $redirect_path, $options_overrides);
+      $output = reporterror_civicrm_generatereport($site_name, $vars, NULL, $options_overrides);
 
       foreach ($destinations as $dest) {
         $dest = trim($dest);
@@ -36,7 +36,7 @@ class CRM_ReportError_Utils {
       }
     }
     else {
-      CRM_Core_Error::debug_log_message('Report Error Extension could not send since no email address was set.');
+      Civi::log()->warning('Report Error Extension could not send since no email address was set.');
     }
 
     self::sendGelfReport($vars, $options_overrides);
