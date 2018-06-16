@@ -349,19 +349,16 @@ function _reporterror_civicrm_get_session_info($show_session_data = FALSE) {
   if ($userId) {
     $output .= "\n\n***LOGGED IN USER***\n";
 
-    $params = array(
-      'version' => 3,
-      'id' => $userId,
-      'return' => 'id,display_name,email',
-    );
-
-    $contact = civicrm_api('Contact', 'getsingle', $params);
-
-    if ($contact['is_error']) {
+    try {
+      $contact = civicrm_api3('Contact', 'getsingle', [
+        'id' => $userId,
+        'return' => 'id,display_name,email',
+      ]);
+      $output .= _reporterror_civicrm_parse_array($contact);
+    }
+    catch (Exception $e) {
       $output .= "Failed to fetch user info using the API:\n";
     }
-
-    $output .= _reporterror_civicrm_parse_array($contact);
   }
   else {
     // Show the remote IP and user-agent of anon users, to facilitate
