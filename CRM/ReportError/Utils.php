@@ -46,7 +46,7 @@ class CRM_ReportError_Utils {
    * Sends a report to a logstash/gelf/greylog server.
    */
   static public function sendGelfReport($vars, $options_overrides) {
-    $is_enabled = reporterror_setting_get('reporterror_gelf_enable');
+    $is_enabled = reporterror_setting_get('reporterror_gelf_enable', $options_overrides);
 
     if (!$is_enabled) {
       return;
