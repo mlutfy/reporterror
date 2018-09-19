@@ -3,7 +3,6 @@
 require_once 'reporterror.civix.php';
 
 define('REPORTERROR_CIVICRM_SUBJECT_LEN', 100);
-define('REPORTERROR_SETTINGS_GROUP', 'ReportError Extension');
 define('REPORTERROR_EMAIL_SEPARATOR', ',');
 
 require_once(__DIR__ . '/vendor/autoload.php');
@@ -47,7 +46,7 @@ function reporterror_civicrm_uninstall() {
   $to = Civi::settings()->get('reporterror_mailto');
 
   if (!empty($to)) {
-    $destinations = explode(REPORTERROR_SETTINGS_GROUP, $to);
+    $destinations = explode(REPORTERROR_EMAIL_SEPARATOR, $to);
     foreach ($destinations as $dest) {
       $dest = trim($dest);
       reporterror_civicrm_send_mail($dest, $subject, $output);
