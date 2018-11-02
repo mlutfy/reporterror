@@ -11,6 +11,10 @@ class CRM_ReportError_Handler_Profiles {
   static public function handler($vars, $options_overrides) {
     $sendreport = TRUE;
 
+    $config = CRM_Core_Config::singleton();
+    $urlVar = $config->userFrameworkURLVar;
+    $arg = explode('/', $_GET[$urlVar]);
+
     if ($arg[0] == 'civicrm' && $arg[1] == 'profile') {
       $redirect = reporterror_setting_get('reporterror_noreferer_handle_profiles', $options_overrides);
       $sendreport = reporterror_setting_get('reporterror_sendreport_profile', $options_overrides);
