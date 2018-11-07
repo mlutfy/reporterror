@@ -25,7 +25,7 @@ class CRM_ReportError_Handler_IgnoreBots {
       }
 
       if ($bots_404) {
-        CRM_ReportError_Utils::generate_404();
+        CRM_ReportError_Utils::generate404();
         return TRUE;
       }
 
