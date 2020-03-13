@@ -22,7 +22,7 @@ The extension can also offer to try to resolve some common errors:
 * Detect bots and optionally generate a 404 http response instead of 'OK'.
 
 To get the latest version of this module:  
-https://github.com/mlutfy/ca.bidon.reporterror
+https://lab.civicrm.org/extensions/reporterror
 
 Distributed under the terms of the GNU Affero General public license (AGPL).
 See LICENSE.txt for details.
@@ -37,7 +37,7 @@ Installation
 If you are installing from the git repository, you must run 'composer install'.
 
 Otherwise, please use the packages from the official releases:  
-https://github.com/mlutfy/ca.bidon.reporterror/releases
+https://lab.civicrm.org/extensions/reporterror/-/releases
 
 or from the releases listed on:  
 https://civicrm.org/extensions/civicrm-error-handler
@@ -90,7 +90,7 @@ Support
 -------
 
 Please post bug reports in the issue tracker of this project on github:  
-https://github.com/mlutfy/ca.bidon.reporterror/issues
+https://lab.civicrm.org/extensions/reporterror/issues
 
 This is a community contributed extension written thanks to the financial
 support of organisations using it, as well as the very helpful and collaborative
@@ -109,5 +109,5 @@ License: AGPL 3
 Copyright (C) 2012-2018 CiviCRM LLC (info@civicrm.org)  
 https://civicrm.org
 
-Copyright (C) 2012-2018 Mathieu Lutfy (mathieu@symbiotic.coop)  
+Copyright (C) 2012-2020 Mathieu Lutfy (mathieu@symbiotic.coop)  
 https://www.symbiotic.coop/en
