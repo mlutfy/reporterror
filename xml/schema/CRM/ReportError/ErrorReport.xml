@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<table>
+  <base>CRM/ReportError</base>
+  <class>ErrorReport</class>
+  <name>civicrm_error_report</name>
+  <comment>CiviCRM Error Report</comment>
+  <log>false</log>
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique ErrorReport ID</comment>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+  <field>
+    <name>event_date</name>
+    <type>datetime</type>
+    <comment>Date and time that the error occurred.</comment>
+    <add>3.4</add>
+  </field>
+  <field>
+    <name>url</name>
+    <type>varchar</type>
+    <length>128</length>
+    <add>3.4</add>
+  </field>
+  <field>
+    <name>ip</name>
+    <type>varchar</type>
+    <length>128</length>
+    <comment>IP address of the visitor who triggered the error.</comment>
+    <add>3.4</add>
+  </field>
+  <field>
+    <name>message</name>
+    <type>varchar</type>
+    <length>255</length>
+    <comment>Short one-line description of the error.</comment>
+    <add>3.4</add>
+  </field>
+  <field>
+    <name>report</name>
+    <type>longtext</type>
+    <comment>Details about the error (headers, backtrace, etc).</comment>
+    <add>3.4</add>
+  </field>
+</table>
