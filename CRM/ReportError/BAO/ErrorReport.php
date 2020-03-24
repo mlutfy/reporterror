@@ -1,4 +1,5 @@
 <?php
+
 use CRM_ReportError_ExtensionUtil as E;
 
 class CRM_ReportError_BAO_ErrorReport extends CRM_ReportError_DAO_ErrorReport {
@@ -8,7 +9,7 @@ class CRM_ReportError_BAO_ErrorReport extends CRM_ReportError_DAO_ErrorReport {
    *
    * @param array $params key-value pairs
    * @return CRM_ReportError_DAO_ErrorReport|NULL
-   *
+   */
   public static function create($params) {
     $className = 'CRM_ReportError_DAO_ErrorReport';
     $entityName = 'ErrorReport';
@@ -21,6 +22,6 @@ class CRM_ReportError_BAO_ErrorReport extends CRM_ReportError_DAO_ErrorReport {
     CRM_Utils_Hook::post($hook, $entityName, $instance->id, $instance);
 
     return $instance;
-  } */
+  }
 
 }

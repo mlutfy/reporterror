@@ -24,11 +24,15 @@ class CRM_ReportError_Utils {
       $subject .= ' (' . substr($vars['message'], 0, $len) . ')';
     }
 
+    $output = reporterror_civicrm_generatereport($site_name, $vars, NULL, $options_overrides);
+
+    $vars['report'] = $output;
+    $vars['subject'] = $subject;
+
     $to = reporterror_setting_get('reporterror_mailto', $options_overrides);
 
     if (!empty($to)) {
       $destinations = explode(REPORTERROR_EMAIL_SEPARATOR, $to);
-      $output = reporterror_civicrm_generatereport($site_name, $vars, NULL, $options_overrides);
 
       foreach ($destinations as $dest) {
         $dest = trim($dest);
@@ -39,7 +43,26 @@ class CRM_ReportError_Utils {
       Civi::log()->warning('Report Error Extension could not send since no email address was set.');
     }
 
+    self::logToDatabase($vars, $options_overrides);
     self::sendGelfReport($vars, $options_overrides);
+  }
+
+  /**
+   * Logs a report in the database.
+   */
+  static public function logToDatabase($vars, $options_overrides) {
+    // @todo Check if the "log to database" setting is enabled.
+
+    $is_handled = !empty($vars['redirect_path']);
+
+    CRM_ReportError_BAO_ErrorReport::create([
+      'url' => $_SERVER['REQUEST_URI'],
+      'ip' => $_SERVER['REMOTE_ADDR'],
+      'is_bot' => false, // FIXME @todo
+      'is_handled' => $is_handled,
+      'message' => $vars['subject'],
+      'report' => $vars['report'],
+    ]);
   }
 
   /**
