@@ -161,15 +161,16 @@ function reporterror_civicrm_navigationMenu(&$params) {
  *
  * @param $vars Array with the 'message' and 'code' of the error.
  */
-function reporterror_civicrm_handler($vars, $options_overrides = array()) {
-  $handers = [
+function reporterror_civicrm_handler($vars, $options_overrides = []) {
+  $handlers = [
+    'HeadRequest',
     'IgnoreBots',
     'FormsNoReferer',
     'SmartGroupRefresh',
     'Profiles',
   ];
 
-  foreach ($handers as $h) {
+  foreach ($handlers as $h) {
     $success = call_user_func_array('CRM_ReportError_Handler_' . $h . '::handler', [$vars, $options_overrides]);
 
     if ($success) {
