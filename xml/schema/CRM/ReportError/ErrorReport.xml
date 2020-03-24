@@ -35,6 +35,28 @@
     <add>3.4</add>
   </field>
   <field>
+    <name>is_bot</name>
+    <title>Is a bot?</title>
+    <type>boolean</type>
+    <default>0</default>
+    <comment>Whether the error was triggerred by a bot.</comment>
+    <add>3.4</add>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
+    <name>is_handled</name>
+    <title>Is handled?</title>
+    <type>boolean</type>
+    <default>0</default>
+    <comment>Whether the error was handled by reporterror.</comment>
+    <add>3.4</add>
+    <html>
+      <type>CheckBox</type>
+    </html>
+  </field>
+  <field>
     <name>message</name>
     <type>varchar</type>
     <length>255</length>

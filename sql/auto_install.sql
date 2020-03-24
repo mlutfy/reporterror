@@ -53,6 +53,8 @@ CREATE TABLE `civicrm_error_report` (
      `event_date` datetime    COMMENT 'Date and time that the error occurred.',
      `url` varchar(128)    ,
      `ip` varchar(128)    COMMENT 'IP address of the visitor who triggered the error.',
+     `is_bot` tinyint   DEFAULT 0 COMMENT 'Whether the error was triggerred by a bot.',
+     `is_handled` tinyint   DEFAULT 0 COMMENT 'Whether the error was handled by reporterror.',
      `message` varchar(255)    COMMENT 'Short one-line description of the error.',
      `report` longtext    COMMENT 'Details about the error (headers, backtrace, etc).' 
 ,
