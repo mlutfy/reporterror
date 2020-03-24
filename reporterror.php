@@ -13,6 +13,11 @@ use CRM_ReportError_ExtensionUtil as E;
  * Implementation of hook_civicrm_config
  */
 function reporterror_civicrm_config(&$config) {
+  if (isset(Civi::$statics[__FUNCTION__])) { return; }
+  Civi::$statics[__FUNCTION__] = 1;
+
+  Civi::dispatcher()->addListener('dataexplorer.boot', ['\Civi\ReportError\Events', 'fireDataExplorerBoot']);
+
   _reporterror_civix_civicrm_config($config);
 
   // override the error handler

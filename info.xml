@@ -3,6 +3,9 @@
   <file>reporterror</file>
   <name>CiviCRM Report Error</name>
   <description>Advanced error handler for CiviCRM that sends an e-mail with detailed information when fatal errors are encountered. It can also handle a few common errors.</description>
+  <classloader>
+    <psr4 prefix="Civi\" path="Civi"/>
+  </classloader>
   <license>AGPL 3</license>
   <maintainer>
     <author>Mathieu Lutfy</author>
