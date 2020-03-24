@@ -50,7 +50,7 @@ CREATE TABLE `civicrm_error_report` (
 
 
      `id` int unsigned NOT NULL AUTO_INCREMENT  COMMENT 'Unique ErrorReport ID',
-     `event_date` datetime    COMMENT 'Date and time that the error occurred.',
+     `event_date` datetime   DEFAULT CURRENT_TIMESTAMP COMMENT 'Date and time that the error occurred.',
      `url` varchar(128)    ,
      `ip` varchar(128)    COMMENT 'IP address of the visitor who triggered the error.',
      `is_bot` tinyint   DEFAULT 0 COMMENT 'Whether the error was triggerred by a bot.',

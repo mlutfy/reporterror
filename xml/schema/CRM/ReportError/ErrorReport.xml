@@ -19,6 +19,7 @@
     <name>event_date</name>
     <type>datetime</type>
     <comment>Date and time that the error occurred.</comment>
+    <default>CURRENT_TIMESTAMP</default>
     <add>3.4</add>
   </field>
   <field>
