@@ -33,7 +33,7 @@ function reporterror_civicrm_xmlMenu(&$files) {
  * Implementation of hook_civicrm_install
  */
 function reporterror_civicrm_install() {
-  return _reporterror_civix_civicrm_install();
+  _reporterror_civix_civicrm_install();
 }
 
 /**
@@ -61,19 +61,19 @@ function reporterror_civicrm_uninstall() {
   $settings = [ 'reporterror_show_full_backtrace', 'reporterror_show_post_data', 'reporterror_show_session_data', 'reporterror_noreferer_sendreport', 'reporterror_noreferer_sendreport_event', 'reporterror_bots_sendreport', 'reporterror_bots_404', 'reporterror_bots_regexp' ];
 
   foreach ($settings as $name) {
-    CRM_Core_DAO::executeQuery('DELETE FROM civicrm_setting WHERE name = %1', array(
-      1 => array($name, 'String'),
-    ));
+    CRM_Core_DAO::executeQuery('DELETE FROM civicrm_setting WHERE name = %1', [
+      1 => [$name, 'String'],
+    ]);
   }
 
-  return _reporterror_civix_civicrm_uninstall();
+  _reporterror_civix_civicrm_uninstall();
 }
 
 /**
  * Implementation of hook_civicrm_enable
  */
 function reporterror_civicrm_enable() {
-  return _reporterror_civix_civicrm_enable();
+  _reporterror_civix_civicrm_enable();
 }
 
 /**
@@ -103,60 +103,32 @@ function reporterror_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
  * is installed, disabled, uninstalled.
  */
 function reporterror_civicrm_managed(&$entities) {
-  return _reporterror_civix_civicrm_managed($entities);
+  _reporterror_civix_civicrm_managed($entities);
 }
 
 /**
  * Implementation of hook_civicrm_navigationMenu
  */
 function reporterror_civicrm_navigationMenu(&$params) {
-/*
-  _reporterror_civix_insert_navigationMenu($params, 'Administer/System Settings', array(
-    'name'      => 'Report Error Settings',
-    'url'        => 'civicrm/admin/reporterror',
+  _reporterror_civix_insert_navigation_menu($params, 'Administer/System Settings', [
+    'label' => E::ts('Report Error Settings'),
+    'name' => 'Report Error Settings',
+    'url' => 'civicrm/admin/setting/reporterror',
     'permission' => 'administer CiviCRM',
-  ));
-*/
-
-  // Get the ID of the 'Administer/System Settings' menu
-  $adminMenuId = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_Navigation', 'Administer', 'id', 'name');
-  $settingsMenuId = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_Navigation', 'System Settings', 'id', 'name');
-
-  // Skip adding menu if there is no administer menu
-  if (! $adminMenuId) {
-    CRM_Core_Error::debug_log_message('Report Error Extension could not find the Administer menu item. Menu item to configure this extension will not be added.');
-    return;
-  }
-
-  if (! $settingsMenuId) {
-    Civi::log()->warning('Report Error Extension could not find the System Settings menu item. Menu item to configure this extension will not be added.');
-    return;
-  }
-
-  // get the maximum key under administer menu
-  $maxSettingsMenuKey = max(array_keys($params[$adminMenuId]['child'][$settingsMenuId]['child']));
-  $nextSettingsMenuKey = $maxSettingsMenuKey + 1;
-
-  $params[$adminMenuId]['child'][$settingsMenuId]['child'][$nextSettingsMenuKey] =  array(
-    'attributes' => array(
-      'name'       => 'Report Error Settings',
-      'label'      => 'Report Error Settings',
-      'url'        => 'civicrm/admin/setting/reporterror?reset=1',
-      'permission' => 'administer CiviCRM',
-      'parentID'   => $settingsMenuId,
-      'navID'      => $nextSettingsMenuKey,
-      'active'      => 1,
-    ),
-  );
+    'operator' => 'OR',
+    'separator' => 0,
+  ]);
+  _reporterror_civix_navigationMenu($params);
 }
 
 /**
  * Custom error handler.
  * This is registered as a callback in hook_civicrm_config().
  *
- * @param $vars Array with the 'message' and 'code' of the error.
+ * @param array $vars Array with the 'message' and 'code' of the error.
+ * @param array $options_overrides
  */
-function reporterror_civicrm_handler($vars, $options_overrides = array()) {
+function reporterror_civicrm_handler($vars, $options_overrides = []) {
   $handers = [
     'IgnoreBots',
     'FormsNoReferer',
@@ -182,14 +154,21 @@ function reporterror_civicrm_handler($vars, $options_overrides = array()) {
  * FIXME: the redirect_path should be included in 'vars'
  * This should be rewritten under CRM_ReportError_Utils,
  * with backwards-compat wrapper.
+ *
+ * @param string $site_name
+ * @param array $vars
+ * @param string $redirect_path
+ * @param array $options_overrides
+ *
+ * @return string
  */
-function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path, $options_overrides = array()) {
+function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path, $options_overrides = []) {
   $show_full_backtrace = reporterror_setting_get('reporterror_show_full_backtrace', $options_overrides);
   $show_post_data = reporterror_setting_get('reporterror_show_post_data', $options_overrides);
   $show_session_data = reporterror_setting_get('reporterror_show_session_data', $options_overrides);
 
-  $output = E::ts('There was a CiviCRM error at %1.', array(1 => $site_name)) . "\n";
-  $output .= E::ts('Date: %1', array(1 => date('c'))) . "\n\n";
+  $output = E::ts('There was a CiviCRM error at %1.', [1 => $site_name]) . "\n";
+  $output .= E::ts('Date: %1', [1 => date('c')]) . "\n\n";
 
   // Backwards compatibility
   if ($redirect_path && empty($vars['redirect_path'])) {
@@ -241,8 +220,13 @@ function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path, $
 
 /**
  * Send the e-mail using CRM_Utils_Mail::send()
+ *
+ * @param string $to
+ * @param string $subject
+ * @param string $output
+ * @param array|null $options_overrides
  */
-function reporterror_civicrm_send_mail($to, $subject, $output, $options_overrides) {
+function reporterror_civicrm_send_mail($to, $subject, $output, $options_overrides = NULL) {
   $email = reporterror_setting_get('reporterror_fromemail', $options_overrides);
 
   //if email is not in the settings, use system default
