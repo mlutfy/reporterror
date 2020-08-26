@@ -167,9 +167,9 @@
           </td>
         </tr>
         <tr class="crm-reporterror-form-block">
-          <td class="label">{$form.reporterror_gelf_hostname.label}</td>
+          <td class="label">{$form.reporterror_gelf_host.label}</td>
           <td>
-            {$form.reporterror_gelf_hostname.html}
+            {$form.reporterror_gelf_host.html}
             <p class="description">{ts}Ex: log.example.org{/ts}</p>
           </td>
         </tr>

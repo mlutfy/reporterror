@@ -52,7 +52,7 @@ class CRM_ReportError_Utils {
       return;
     }
 
-    $host = reporterror_setting_get('reporterror_gelf_hostname', $options_overrides);
+    $host = reporterror_setting_get('reporterror_gelf_host', $options_overrides);
     $post = 12201; // FIXME, make configurable?
     $message = $vars['message'];
 

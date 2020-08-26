@@ -23,7 +23,7 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
     'reporterror_bots_regexp' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
     'reporterror_smartgroups_autodisable' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
     'reporterror_gelf_enable' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
-    'reporterror_gelf_hostname' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+    'reporterror_gelf_host' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
     'reporterror_gelf_port' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
     'reporterror_fromemail' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
   ];
@@ -146,7 +146,7 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
 
     // Remote Logging
     $this->addYesNo('reporterror_gelf_enable', E::ts('Enable remote logging?'));
-    $this->add('text', 'reporterror_gelf_hostname', E::ts('Logging server hostname'));
+    $this->add('text', 'reporterror_gelf_host', E::ts('Logging server hostname'));
     $this->add('text', 'reporterror_gelf_port', E::ts('Logging server port'));
 
     $this->addButtons([
