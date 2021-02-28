@@ -37,6 +37,15 @@ function reporterror_civicrm_install() {
 }
 
 /**
+ * Implements hook_civicrm_postInstall().
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_postInstall
+ */
+function reporterror_civicrm_postInstall() {
+  _civirules_civix_civicrm_postInstall();
+}
+
+/**
  * Implementation of hook_civicrm_uninstall
  */
 function reporterror_civicrm_uninstall() {
