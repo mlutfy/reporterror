@@ -7,9 +7,9 @@
  * extension.
  */
 class CRM_ReportError_ExtensionUtil {
-  const SHORT_NAME = "reporterror";
-  const LONG_NAME = "ca.bidon.reporterror";
-  const CLASS_PREFIX = "CRM_ReportError";
+  const SHORT_NAME = 'reporterror';
+  const LONG_NAME = 'ca.bidon.reporterror';
+  const CLASS_PREFIX = 'CRM_ReportError';
 
   /**
    * Translate a string using the extension's domain.
