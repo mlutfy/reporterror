@@ -17,6 +17,7 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
     'reporterror_mailto' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
     'reporterror_show_full_backtrace' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
     'reporterror_show_post_data' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
+    'reporterror_show_get_data' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
     'reporterror_show_session_data' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
     'reporterror_bots_sendreport' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
     'reporterror_bots_404' => CRM_Core_BAO_Setting::SYSTEM_PREFERENCES_NAME,
@@ -47,6 +48,7 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
     $this->addYesNo('reporterror_show_full_backtrace', E::ts('Display a full backtrace in e-mails?'));
     $this->addYesNo('reporterror_show_post_data', E::ts('Display POST data in e-mails?'));
     $this->addYesNo('reporterror_show_session_data', E::ts('Display session data in e-mails?'));
+    $this->addYesNo('reporterror_show_get_data', E::ts('Display GET data in e-mails?'));
 
     // Special handling of Contribution page errors.
     // Get a list of contribution pages

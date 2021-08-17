@@ -30,6 +30,12 @@
         <div class="description">{ts}Session data can provide clues, but should probably be disabled most of the time, as it can include sensitive information.{/ts}</div>
       </td>
     </tr>
+    <tr class="crm-reporterror-form-block">
+      <td class="label">{$form.reporterror_show_get_data.label}</td>
+      <td>{$form.reporterror_show_get_data.html}
+        <div class="description">{ts}GET is the data in the URL request.{/ts}</div>
+      </td>
+    </tr>
   </table>
 
   <div class="crm-accordion-wrapper crm-reporterror_admin_form-accordion collapsed">

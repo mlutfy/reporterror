@@ -175,6 +175,7 @@ function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path, $
   $show_full_backtrace = reporterror_setting_get('reporterror_show_full_backtrace', $options_overrides);
   $show_post_data = reporterror_setting_get('reporterror_show_post_data', $options_overrides);
   $show_session_data = reporterror_setting_get('reporterror_show_session_data', $options_overrides);
+  $show_get_data = reporterror_setting_get('reporterror_show_get_data', $options_overrides);
 
   $output = E::ts('There was a CiviCRM error at %1.', [1 => $site_name]) . "\n";
   $output .= E::ts('Date: %1', [1 => date('c')]) . "\n\n";
@@ -213,6 +214,12 @@ function reporterror_civicrm_generatereport($site_name, $vars, $redirect_path, $
   if ($show_post_data) {
     $output .= "\n\n***POST***\n";
     $output .= _reporterror_civicrm_parse_array($_POST);
+  }
+
+  // $_GET
+  if ($show_get_data) {
+    $output .= "\n\n***GET***\n";
+    $output .= _reporterror_civicrm_parse_array($_GET);
   }
 
   if ($show_full_backtrace) {
