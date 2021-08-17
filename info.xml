@@ -20,7 +20,6 @@
   <compatibility>
     <ver>5.0</ver>
   </compatibility>
-  <comments></comments>
   <civix>
     <namespace>CRM/ReportError</namespace>
   </civix>

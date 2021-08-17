@@ -7,7 +7,7 @@ class CRM_ReportError_Utils {
   /**
    * Sends an email report about the error.
    */
-  static public function sendReport($vars, $options_overrides) {
+  public static function sendReport($vars, $options_overrides) {
     $domain = CRM_Core_BAO_Domain::getDomain();
     $site_name = $domain->name;
 
@@ -45,7 +45,7 @@ class CRM_ReportError_Utils {
   /**
    * Sends a report to a logstash/gelf/greylog server.
    */
-  static public function sendGelfReport($vars, $options_overrides) {
+  public static function sendGelfReport($vars, $options_overrides) {
     $is_enabled = reporterror_setting_get('reporterror_gelf_enable', $options_overrides);
 
     if (!$is_enabled) {
@@ -74,7 +74,7 @@ class CRM_ReportError_Utils {
    * Generates a 404 HTTP response. Useful for bots who should avoid indexing
    * a given page.
    */
-  static public function generate404() {
+  public static function generate404() {
     $config = CRM_Core_Config::singleton();
 
     switch ($config->userFramework) {

@@ -30,9 +30,6 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
 
   /**
    * Function to build the form
-   *
-   * @return None
-   * @access public
    */
   public function buildQuickForm() {
     $this->applyFilter('__ALL__', 'trim');
@@ -184,9 +181,6 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
 
   /**
    * Function to process the form
-   *
-   * @access public
-   * @return None
    */
   public function postProcess() {
     // store the submitted values in an array

@@ -6,15 +6,16 @@ class CRM_ReportError_Handler_IgnoreBots {
 
   /**
    * Identify and possibly ignore bots.
+   *
+   * @param array $vars
+   * @param array $options_overrides
+   *
+   * @return bool
    */
-  static public function handler($vars, $options_overrides) {
-    $sendreport = TRUE;
-
-    $is_bot = FALSE;
+  public static function handler($vars, $options_overrides) {
     $bots_regexp = reporterror_setting_get('reporterror_bots_regexp', $options_overrides);
 
     if ($bots_regexp && preg_match('/' . $bots_regexp . '/', $_SERVER['HTTP_USER_AGENT'])) {
-      $is_bot = TRUE;
 
       $bots_sendreport = reporterror_setting_get('reporterror_bots_sendreport', $options_overrides);
       $bots_404 = reporterror_setting_get('reporterror_bots_404', $options_overrides);

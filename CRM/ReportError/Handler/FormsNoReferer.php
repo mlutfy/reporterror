@@ -12,19 +12,23 @@ class CRM_ReportError_Handler_FormsNoReferer {
    * Typical use-case: someone copy-pasted a link to a contribution form, but they did not
    * select the arguments of the URL, so it directs people to /civicrm/contribution/transact,
    * which fatals because there is no 'id' present.
+   *
+   * @param array $vars
+   * @param array $options_overrides
+   *
+   * @return bool
    */
-  static public function handler($vars, $options_overrides) {
+  public static function handler($vars, $options_overrides) {
     $sendreport = TRUE;
 
     $config = CRM_Core_Config::singleton();
-    $urlVar = $config->userFrameworkURLVar;
-    $arg = explode('/', $_GET[$urlVar]);
+    $arg = explode('/', $_GET[$config->userFrameworkURLVar]);
 
     // Redirect for Contribution pages without a referrer (close / restore browser page)
     if ($arg[0] == 'civicrm' && $arg[1] == 'contribute' && $arg[2] == 'transact' && ! $_SERVER['HTTP_REFERER'] && $_SERVER['REQUEST_METHOD'] != 'HEAD') {
       $handle = reporterror_setting_get('reporterror_noreferer_handle', $options_overrides);
       $pageid = reporterror_setting_get('reporterror_noreferer_pageid', $options_overrides);
-      $sendreport = reporterror_setting_get('reporterror_noreferer_sendreport', $options_overrides, 1);
+      $sendreport = reporterror_setting_get('reporterror_noreferer_sendreport', $options_overrides);
 
       if ($handle == 1 || ($handle == 2 && ! $pageid)) {
         $vars['redirect_path'] = CRM_Utils_System::baseCMSURL();
@@ -36,7 +40,7 @@ class CRM_ReportError_Handler_FormsNoReferer {
     elseif ($arg[0] == 'civicrm' && $arg[1] == 'event' && ! $_SERVER['HTTP_REFERER'] && $_SERVER['REQUEST_METHOD'] != 'HEAD') {
       $handle = reporterror_setting_get('reporterror_noreferer_handle_event', $options_overrides);
       $pageid = reporterror_setting_get('reporterror_noreferer_handle_eventid', $options_overrides);
-      $sendreport = reporterror_setting_get('reporterror_noreferer_sendreport_event', $options_overrides, 1);
+      $sendreport = reporterror_setting_get('reporterror_noreferer_sendreport_event', $options_overrides);
 
       if ($handle == 1 || ($handle == 2 && ! $pageid)) {
         $vars['redirect_path'] = CRM_Utils_System::baseCMSURL();
