@@ -7,8 +7,13 @@ class CRM_ReportError_Handler_SmartGroupRefresh {
   /**
    * Try to handle a failing smartgroup refresh.
    * This will automatically disable a broken smartgroup.
+   *
+   * @param array $vars
+   * @param array $options_overrides
+   *
+   * @return bool
    */
-  static public function handler($vars, $options_overrides) {
+  public static function handler($vars, $options_overrides) {
     if (!isset($vars['exception']) && !isset($vars['pearError'])) {
       return FALSE;
     }

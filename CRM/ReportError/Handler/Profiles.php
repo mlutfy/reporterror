@@ -7,10 +7,13 @@ class CRM_ReportError_Handler_Profiles {
   /**
    * Profiles generate a lot of errors, either because they were disabled
    * or because they are reserved to admins.
+   *
+   * @param array $vars
+   * @param array $options_overrides
+   *
+   * @return bool
    */
-  static public function handler($vars, $options_overrides) {
-    $sendreport = TRUE;
-
+  public static function handler($vars, $options_overrides) {
     $config = CRM_Core_Config::singleton();
     $urlVar = $config->userFrameworkURLVar;
     $arg = explode('/', $_GET[$urlVar]);

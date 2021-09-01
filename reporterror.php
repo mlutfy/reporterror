@@ -387,8 +387,13 @@ function _reporterror_civicrm_get_session_info($show_session_data = FALSE) {
  * can set to override the behavior of the report. For example, if a
  * payment processor caught an exception doing a curl/soap request, it
  * will probably want to disable the full backtrace and session info.
+ *
+ * @param string $name
+ * @param array $options_overrides
+ *
+ * @return mixed|null
  */
-function reporterror_setting_get($name, $options_overrides, $default = NULL) {
+function reporterror_setting_get($name, $options_overrides) {
   if (isset($options_overrides[$name])) {
     return $options_overrides[$name];
   }
