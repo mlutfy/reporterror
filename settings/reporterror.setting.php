@@ -160,6 +160,18 @@ return [
     'description' => 'Display session data in Report Error e-mails?',
     'help_text' => '',
   ],
+  'reporterror_show_get_data' => [
+    'group_name' => 'domain',
+    'group' => 'reporterror',
+    'name' => 'reporterror_show_get_data',
+    'type' => 'Boolean',
+    'html_type' => 'radio',
+    'default' => 0,
+    'is_domain' => 1,
+    'is_contact' => 0,
+    'description' => 'Display GET data in Report Error e-mails?',
+    'help_text' => '',
+  ],
   'reporterror_bots_sendreport' => [
     'group_name' => 'domain',
     'group' => 'reporterror',
