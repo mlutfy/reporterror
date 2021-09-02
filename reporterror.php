@@ -373,6 +373,9 @@ function _reporterror_civicrm_get_session_info($show_session_data = FALSE) {
   }
 
   $output .= "REMOTE_ADDR: " . $_SERVER['REMOTE_ADDR'] . "\n";
+  if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+    $output .= "HTTP_X_FORWARDED_FOR: " . $_SERVER['HTTP_X_FORWARDED_FOR'] . "\n";
+  }
   $output .= "HTTP_USER_AGENT: " . $_SERVER['HTTP_USER_AGENT'] . "\n";
 
   if ($show_session_data) {
