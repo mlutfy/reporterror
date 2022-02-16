@@ -42,7 +42,7 @@ function reporterror_civicrm_install() {
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_postInstall
  */
 function reporterror_civicrm_postInstall() {
-  _civirules_civix_civicrm_postInstall();
+  _reporterror_civix_civicrm_postInstall();
 }
 
 /**
