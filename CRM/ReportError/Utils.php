@@ -53,7 +53,7 @@ class CRM_ReportError_Utils {
     }
 
     $host = reporterror_setting_get('reporterror_gelf_host', $options_overrides);
-    $post = 12201; // FIXME, make configurable?
+    $port = 12201; // FIXME, make configurable?
     $message = $vars['message'];
 
     $transport = new \Gelf\Transport\UdpTransport($host, $port);
