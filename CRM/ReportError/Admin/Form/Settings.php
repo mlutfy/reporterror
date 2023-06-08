@@ -74,7 +74,7 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
     $this->addRadio('reporterror_noreferer_handle',
       E::ts('Enable transparent redirection?'),
       $radio_choices,
-      array('options_per_line' => 1),
+      ['options_per_line' => 1],
       '<br/>' /* one option per line */
      );
 
@@ -108,7 +108,7 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
     $this->addRadio('reporterror_noreferer_handle_event',
       E::ts('Enable transparent redirection?'),
       $radio_choices,
-      array('options_per_line' => 1),
+      ['options_per_line' => 1],
       '<br/>' /* one option per line */
      );
 
@@ -128,7 +128,7 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
     $this->addRadio('reporterror_handle_profile',
       E::ts('Enable transparent redirection?'),
       $radio_choices,
-      array('options_per_line' => 1),
+      ['options_per_line' => 1],
       '<br/>' /* one option per line */
      );
 
@@ -149,15 +149,8 @@ class CRM_ReportError_Admin_Form_Settings extends CRM_Admin_Form_Setting {
     $this->add('text', 'reporterror_gelf_port', E::ts('Logging server port'));
 
     $this->addButtons([
-      array(
-        'type' => 'submit',
-        'name' => ts('Save'),
-        'isDefault' => TRUE,
-      ),
-      array(
-        'type' => 'cancel',
-        'name' => ts('Cancel'),
-      ),
+      ['type' => 'submit', 'name' => ts('Save'), 'isDefault' => TRUE],
+      ['type' => 'cancel', 'name' => ts('Cancel')],
     ]);
 
     $this->addFormRule(['CRM_ReportError_Admin_Form_Settings', 'formRule'], $this);

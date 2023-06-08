@@ -366,8 +366,7 @@ function _reporterror_civicrm_get_session_info($show_session_data = FALSE) {
 
   // $_SERVER
   $output .= "\n\n***SERVER***\n";
-  $output .= _reporterror_civicrm_parse_array($_SERVER);
-  return $output;
+  return $output . _reporterror_civicrm_parse_array($_SERVER);
 }
 
 /**

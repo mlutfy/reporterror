@@ -14,10 +14,10 @@ class CRM_ReportError_Utils {
     $len = REPORTERROR_CIVICRM_SUBJECT_LEN;
 
     if (!empty($vars['reporterror_subject'])) {
-      $subject = E::ts('CiviCRM error [%2] at %1', array(1 => $site_name, 2 => $vars['reporterror_subject']));
+      $subject = E::ts('CiviCRM error [%2] at %1', [1 => $site_name, 2 => $vars['reporterror_subject']]);
     }
     else {
-      $subject = E::ts('CiviCRM error at %1', array(1 => $site_name));
+      $subject = E::ts('CiviCRM error at %1', [1 => $site_name]);
     }
 
     if ($len) {
