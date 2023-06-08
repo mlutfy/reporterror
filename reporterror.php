@@ -344,7 +344,7 @@ function _reporterror_civicrm_get_session_info($show_session_data = FALSE) {
       $output .= _reporterror_civicrm_parse_array($contact);
     }
     catch (Exception $e) {
-      $output .= "Failed to fetch user info using the API:\n";
+      $output .= "Failed to fetch user info using the API: " . $e->getMessage() . "\n";
     }
   }
   else {
