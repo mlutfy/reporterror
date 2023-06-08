@@ -11,11 +11,11 @@
   <urls>
     <url desc="Main Extension Page">https://lab.civicrm.org/extensions/reporterror</url>
     <url desc="Documentation">https://lab.civicrm.org/extensions/reporterror/blob/master/README.md</url>
-    <url desc="Support">https://www.symbiotic.coop/en</url>
+    <url desc="Support">https://lab.civicrm.org/extensions/reporterror/-/issues</url>
     <url desc="Licensing">https://civicrm.org/licensing</url>
   </urls>
-  <releaseDate>2022-11-01</releaseDate>
-  <version>3.5</version>
+  <releaseDate>2023-06-08</releaseDate>
+  <version>3.6</version>
   <develStage>stable</develStage>
   <compatibility>
     <ver>5.49</ver>
